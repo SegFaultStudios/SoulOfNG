@@ -13,7 +13,7 @@ file(GLOB_RECURSE PROJECT_SOURCES ${SRC_DIR}/*.cpp)
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/external/SMFL/include/)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
         sfml-graphics
