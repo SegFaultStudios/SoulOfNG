@@ -1,0 +1,25 @@
+## High Priority
+- [ ] Create JSON scene loader
+We can create .json file that holds all data needed by scen like:
+"name": "plane",
+"position": [7.5, -0.5],
+"scale": [5.0, 5.0]
+Then we parse it and add new game objects
+---
+- [ ] Create Scene class
+Create Scene class that holds all game objects like(walls, enemies etc)
+---
+
+## Medium Priority  
+- [ ] Add texture manager
+- [ ] Create player controller
+
+## Low Priority
+- [ ] Implement sound manager
+
+## Ideas & Future
+- [ ] Something
+
+## Completed
+- [x] Set up CMake build system 28.10.25
+- [x] Basic SFML window setup 28.10.25
