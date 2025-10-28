@@ -11,6 +11,11 @@ Player::Player(const std::string& name) : Entity(name)
     setPosition({400, 300});
 }
 
+void Player::handleInput(sf::Event& event)
+{
+
+}
+
 void Player::update(float deltaTime)
 {
 

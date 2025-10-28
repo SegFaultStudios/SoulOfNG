@@ -21,9 +21,7 @@ int main()
     while (window.isOpen())
     {
         deltaTime = clock.restart().asSeconds();
-
-        scene.update(deltaTime);
-
+        
         while (std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -36,7 +34,11 @@ int main()
 
                 window.setView(view);
             }
+
+            scene.handleInput(event.value());
         }
+
+        scene.update(deltaTime);
 
         window.clear();
 

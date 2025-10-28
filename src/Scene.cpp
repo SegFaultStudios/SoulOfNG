@@ -139,6 +139,12 @@ bool Scene::saveToFile(const std::string& filePath)
     return true;
 }
 
+void Scene::handleInput(sf::Event& event)
+{
+    for(const auto& [id, entity] : m_entities)
+        entity->handleInput(event);
+}
+
 void Scene::update(float deltaTime)
 {
     for(const auto& [id, entity] : m_entities)

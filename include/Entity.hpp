@@ -31,6 +31,7 @@ public:
         return m_name;
     }
 
+    virtual void handleInput(sf::Event& event) = 0;
     virtual void update(float deltaTime) = 0;
     virtual void draw(sf::RenderWindow& target) = 0;
     virtual ~Entity() = default;

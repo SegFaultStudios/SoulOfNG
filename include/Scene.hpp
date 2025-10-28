@@ -29,6 +29,7 @@ public:
     bool loadFromFile(const std::string& filePath);
     bool saveToFile(const std::string& filePath);
 
+    void handleInput(sf::Event& event);
     void update(float deltaTime);
     void draw(sf::RenderWindow& target);
 
