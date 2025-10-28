@@ -21,4 +21,5 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         sfml-system
         sfml-audio
         sfml-network
+        nlohmann_json
 )

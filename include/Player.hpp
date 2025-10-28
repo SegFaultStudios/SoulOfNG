@@ -6,9 +6,12 @@
 class Player : public Entity
 {
 public:
-    Player();
+    Player(const std::string& name = "Player");
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& target) override;
+
+private:
+    sf::RectangleShape m_playerMesh;
 };
 
 #endif //PLAYER_HPP

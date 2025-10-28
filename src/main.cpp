@@ -1,6 +1,9 @@
 #include <SFML/Window.hpp>
 #include <optional>
 #include "Player.hpp"
+#include "Scene.hpp"
+
+#include <iostream>
 
 int main()
 {
@@ -8,10 +11,19 @@ int main()
 
     sf::View view = window.getDefaultView();
 
-    Player player;
+    Scene scene;
+
+    scene.addEntity<Player>("Player");
+
+    sf::Clock clock;
+    float deltaTime = 0.0f;
 
     while (window.isOpen())
     {
+        deltaTime = clock.restart().asSeconds();
+
+        scene.update(deltaTime);
+
         while (std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
@@ -28,8 +40,11 @@ int main()
 
         window.clear();
 
-        player.draw(window);
+        scene.draw(window);
 
         window.display();
+
+        // std::cout << "Frame time: " << deltaTime * 1000.0f << "ms" << std::endl; //How much time took to render a frame
+        // std::cout << "FPS: " << 1.0f / deltaTime << std::endl; //FPS counter
     }
 }

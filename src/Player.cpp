@@ -1,12 +1,14 @@
 #include "Player.hpp"
 
-static sf::RectangleShape player(sf::Vector2f(50, 50));
-
-Player::Player()
+Player::Player(const std::string& name) : Entity(name)
 {
-    player.setPosition({400, 300});
-    player.setFillColor(sf::Color::Green);
+    m_playerMesh.setSize({50, 50});
 
+    m_playerMesh.setPosition({400, 300});
+    m_playerMesh.setFillColor(sf::Color::Green);
+
+    setScale({50, 50});
+    setPosition({400, 300});
 }
 
 void Player::update(float deltaTime)
@@ -16,5 +18,5 @@ void Player::update(float deltaTime)
 
 void Player::draw(sf::RenderWindow& target)
 {
-    target.draw(player);
+    target.draw(m_playerMesh);
 }
