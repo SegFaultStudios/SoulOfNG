@@ -33,6 +33,11 @@ void AssetsManager::addTexture(const sf::Texture& texture, const std::string& fi
     m_textures[filePath] = texture;
 }
 
+const std::unordered_map<std::string, sf::Texture>& AssetsManager::getTextures() const
+{
+    return m_textures;
+}
+
 sf::Texture* AssetsManager::getTexture(const std::string& filePath)
 {
     auto it = m_textures.find(filePath);

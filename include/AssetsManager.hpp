@@ -16,6 +16,8 @@ public:
 
     void addTexture(const sf::Texture& texture, const std::string& filePath);
 
+    const std::unordered_map<std::string, sf::Texture>& getTextures() const;
+
 private:
     std::unordered_map<std::string, sf::Texture> m_textures;
 };

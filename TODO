@@ -1,27 +1,79 @@
 ## High Priority
-- [ ] Create JSON scene loader
-We can create .json file that holds all data needed by scen like:
-"name": "plane",
-"position": [7.5, -0.5],
-"scale": [5.0, 5.0]
-Then we parse it and add new game objects
----
-- [ ] Create Scene class
-Create Scene class that holds all game objects like(walls, enemies etc)
----
-
+- [ ] Player health system (HP, healing, damage)
+- [ ] Basic combat system (melee attacks)
+- [ ] Enemy AI (patrol, chase, attack)
+- [ ] Death/respawn system
+- [ ] Procedural room generation
+- [ ] Corridor generation between rooms
+- [ ] Place enemies and items randomly
+- [ ] Staircase to next level
+- [ ] Level progression system
+- [ ] Item pickup system
+- [ ] Inventory management
+- [ ] Basic UI (health bar, level, etc.)
+- [ ] Game over screen
 ## Medium Priority  
-- [ ] Add texture manager
-- [ ] Create player controller
-
+- [ ] Weapon system (swords, wands, bows)
+- [ ] Armor system (defense values)
+- [ ] Potions (health, strength, invisibility)
+- [ ] Scrolls (magic mapping, teleportation)
+- [ ] Food system (hunger mechanic)
+- [ ] Basic enemies (rats, skeletons)
+- [ ] Ranged enemies (mages, archers)
+- [ ] Boss enemies (level guardians)
+- [ ] Enemy loot tables
+- [ ] Experience points system
+- [ ] Level up system
+- [ ] Stat increases (strength, dexterity)
+- [ ] Talent/skill tree
+- [ ] Class system (warrior, mage, rogue)
 ## Low Priority
 - [ ] Implement sound manager
-
+- [ ] Traps system (pitfalls, poison darts)
+- [ ] Secret rooms and hidden passages
+- [ ] Environmental interactions (levers, pressure plates)
+- [ ] Day/night cycle effects
+- [ ] Weather effects in outdoor areas
+- [ ] Main menu with options
+- [ ] Pause menu
+- [ ] Controls customization
+- [ ] Tutorial system
+- [ ] Achievement system
+- [ ] Background music
+- [ ] Player character animations (idle, walk, attack)
+- [ ] Enemy sprite sheets
+- [ ] Item sprites (weapons, potions, scrolls)
+- [ ] Environmental tiles (walls, floors, water)
+- [ ] Particle effects (blood, magic, dust)
+- [ ] Damage numbers popups
+- [ ] Health bar above entities
+- [ ] Status effect icons
+- [ ] Screen shake for impacts
+- [ ] Flash effects on hit
+- [ ] Critical hits and misses
+- [ ] Status effects (poison, paralysis, burning)
+- [ ] Elemental damage types
+- [ ] Weapon special abilities
+- [ ] Dodge and block mechanics
+- [ ] Potion brewing system
+- [ ] Scroll scribing
+- [ ] Weapon/armor upgrading
+- [ ] Enchanting system
+- [ ] Alchemy lab rooms
+- [ ] Friendly NPCs (merchants, trainers)
+- [ ] Quest givers with objectives
+- [ ] Dialogue system
+- [ ] Reputation system
+- [ ] Multiple endings
+- [ ] Local co-op mode
 ## Ideas & Future
-- [ ] Something
+- [ ] We have hardcoded rooms and generated rooms
 
 ## Completed
 - [x] Set up CMake build system 28.10.25
 - [x] Basic SFML window setup 28.10.25
-
-## Create the camera following player
+- [x] Create JSON scene loader
+- [x] Create Scene class
+- [x] Add texture manager
+- [x] Create player controller
+- [x] Create the camera following player

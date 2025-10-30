@@ -103,10 +103,75 @@ void Editor::drawSelectedEntityDetails()
         return;
     }
 
+    static bool shotTexturePopup{false};
+
     char buffer[128];
     std::strncpy(buffer, selectedEntity->getName().c_str(), sizeof(buffer));
     if (ImGui::InputText("##Name", buffer, sizeof(buffer)))
         selectedEntity->setName(std::string(buffer));
+
+    ImGui::PushID("tex");
+    ImTextureID texId = (ImTextureID)(uintptr_t)selectedEntity->getTexture().getNativeHandle();
+    if (ImGui::ImageButton("tex", texId, ImVec2(50, 50)))
+        shotTexturePopup = true;
+    ImGui::PopID();
+
+    if (shotTexturePopup)
+    {
+        ImGui::OpenPopup("texture_selector");
+        shotTexturePopup = false;
+    }
+
+    if (ImGui::BeginPopup("texture_selector"))
+    {
+        ImGui::Text("Select Texture");
+        ImGui::Separator();
+
+        static char filter[128] = "";
+        ImGui::InputTextWithHint("##Search", "Search textures...", filter, sizeof(filter));
+        ImGui::Separator();
+
+        ImGui::BeginChild("TextureScroll", ImVec2(300, 200), true);
+
+        for (const auto& [textureId, texture] : AssetsManager::instance().getTextures())
+        {
+            if (filter[0] != '\0' && textureId.find(filter) == std::string::npos)
+                continue;
+
+                std::string id = textureId;
+
+                ImGui::PushID(textureId.c_str());
+
+                ImTextureID imguiTexId = (ImTextureID)(uintptr_t)texture.getNativeHandle();
+
+                if (ImGui::ImageButton(id.c_str(), imguiTexId, ImVec2(50, 50)))
+                {
+                    selectedEntity->setTexture(texture);
+                    ImGui::CloseCurrentPopup();
+                }
+
+                if (ImGui::IsItemHovered())
+                {
+                    ImGui::BeginTooltip();
+                    ImGui::Text("%s", textureId.c_str());
+                    ImGui::EndTooltip();
+                }
+                ImGui::TextWrapped("%s", textureId.c_str());
+
+                ImGui::PopID();
+            }
+
+            ImGui::EndChild();
+
+            // Close button
+            ImGui::Separator();
+            if (ImGui::Button("Close"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+    }
+
 
     if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
