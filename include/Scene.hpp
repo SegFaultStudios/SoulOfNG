@@ -12,12 +12,34 @@ public:
     template<typename T, typename... Args>
     uint64_t addEntity(const std::string& entityName, Args&&... args)
     {
+        auto generateUniqueName = [this](const std::string& baseName)
+        {
+            int counter = 1;
+            std::string newName;
+            
+            do 
+            {
+                newName = baseName + "_" + (counter < 10 ? "0" : "") + std::to_string(counter);
+                counter++;
+            }
+            while (doesEntityNameExist(newName));
+            
+            return newName;
+        };
+
         static_assert(!std::is_abstract_v<T>, "Cannot add abstract entity");
         static_assert(std::is_base_of_v<Entity, T>, "T must derive from Entity class");
 
         uint64_t id = m_entities.size();
 
-        auto entity = std::make_unique<T>(entityName, std::forward<Args>(args)...);
+        std::string finalName = entityName;
+
+        if(doesEntityNameExist(entityName))
+        {
+            finalName = generateUniqueName(entityName);
+        }
+
+        auto entity = std::make_unique<T>(finalName, std::forward<Args>(args)...);
 
         m_entities[id] = std::move(entity);
 
@@ -28,10 +50,15 @@ public:
 
     bool loadFromFile(const std::string& filePath);
     bool saveToFile(const std::string& filePath);
+    const std::unordered_map<uint64_t, Entity::UniquePtr>& getEntities() const;
+
+    uint64_t findEntityWithName(const std::string& name) const;
 
     void handleInput(sf::Event& event);
     void update(float deltaTime);
     void draw(sf::RenderWindow& target);
+
+    bool doesEntityNameExist(const std::string& name) const;
 
 private:
     //*Id = entity
