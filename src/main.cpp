@@ -36,6 +36,7 @@ int main()
             }
 
             scene.handleInput(event.value());
+            std::cout << "scene.handleInput" << std::endl;
         }
 
         scene.update(deltaTime);
