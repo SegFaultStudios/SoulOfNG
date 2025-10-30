@@ -38,7 +38,14 @@ public:
 
     void setTexture(const sf::Texture& texture)
     {
+
         sprite_->setTexture(texture);
+        sf::Vector2i textureSize(texture.getSize().x, texture.getSize().y );
+        sf::IntRect spriteRect = sprite_->getTextureRect();
+        spriteRect.size = textureSize;
+        sprite_->setTextureRect(spriteRect);
+
+
     }
 
     const sf::Texture& getTexture() const

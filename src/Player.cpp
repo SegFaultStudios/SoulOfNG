@@ -13,7 +13,7 @@ void Player::handleInput(sf::Event& event)
     
 }
 
-void Player::speedSetDefault() {
+void Player::setSpeedDefault() {
     m_speed = 200;
 }
 
@@ -22,7 +22,7 @@ void Player::update(float deltaTime)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::LShift)) {
         m_speed = 100;
     } else {
-        speedSetDefault();
+        setSpeedDefault();
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) {
         setPosition({getPosition().x  + m_speed * deltaTime, getPosition().y});

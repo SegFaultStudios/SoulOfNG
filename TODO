@@ -23,3 +23,5 @@ Create Scene class that holds all game objects like(walls, enemies etc)
 ## Completed
 - [x] Set up CMake build system 28.10.25
 - [x] Basic SFML window setup 28.10.25
+
+## Create the camera following player

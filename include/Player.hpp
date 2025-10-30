@@ -10,7 +10,7 @@ public:
     void update(float deltaTime) override;
     void handleInput(sf::Event& event) override;
 
-    void speedSetDefault();
+    void setSpeedDefault();
 
 private:
     float m_speed;
