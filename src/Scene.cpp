@@ -6,6 +6,7 @@
 #include <iostream>
 
 #include "Player.hpp"
+#include "Wall.hpp"
 
 Entity* Scene::getEntity(uint64_t id) const
 {
@@ -45,6 +46,7 @@ bool Scene::loadFromFile(const std::string& filePath)
     for (const auto& objectJson : json["game_objects"])
     {
         const std::string& name = objectJson.value("name", "undefined");
+        const std::string& texturePath = objectJson.value("texture", "");
 
         if(!objectJson.contains("type"))
         {
@@ -63,6 +65,11 @@ bool Scene::loadFromFile(const std::string& filePath)
             auto id = addEntity<Player>(name);
             entity = getEntity(id);
         }
+        else if(type == EntityEnum::WALL)
+        {
+            auto id = addEntity<Wall>(name);
+            entity = getEntity(id);
+        }
         else
         {   
             std::cerr << "Something is weird with id" << std::endl;
@@ -73,6 +80,14 @@ bool Scene::loadFromFile(const std::string& filePath)
         {
             std::cerr << "Failed to parse entity" << std::endl;
             continue;
+        }
+
+        if(!texturePath.empty())
+        {
+            if(auto texture = AssetsManager::instance().loadTexture(texturePath))
+                entity->setTexture(*texture);
+            else
+                std::cerr << "Failed to set texture: " << texturePath << '\n';
         }
 
         if (objectJson.contains("position"))
@@ -111,15 +126,15 @@ bool Scene::saveToFile(const std::string& filePath)
         nlohmann::json objectJson;
 
         objectJson["name"] = entity->getName();
-
+        objectJson["texture"] = AssetsManager::instance().getTexturePath(&entity->getTexture());
         objectJson["position"] = {entity->getPosition().x, entity->getPosition().y};
         objectJson["scale"] = {entity->getScale().x, entity->getScale().y};
 
         //TODO this is soo bad...
         if(auto player = dynamic_cast<Player*>(entity.get()))
-        {
             objectJson["type"] = 1;
-        }
+        else if(auto wall = dynamic_cast<Wall*>(entity.get()))
+            objectJson["type"] = 2;
 
         // objectJson["rotation"] = {entity->getRotation().x, entity->getRotation().y};
 
@@ -178,4 +193,29 @@ uint64_t Scene::findEntityWithName(const std::string& name) const
             return id;
 
     return 0;
+}
+
+bool Scene::removeEntity(uint64_t id)
+{
+    auto it = m_entities.find(id);
+
+    if(it != m_entities.end())
+    {
+        m_entities.erase(it);
+        return true;
+    }
+
+    return false;
+}
+
+bool Scene::removeEntity(Entity* entity)
+{
+    for(const auto& [id, en] : m_entities)
+        if(en.get() == entity)
+        {
+            m_entities.erase(id);
+            return true;
+        }
+
+    return false;
 }

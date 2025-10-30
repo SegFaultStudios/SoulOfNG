@@ -60,6 +60,9 @@ public:
 
     bool doesEntityNameExist(const std::string& name) const;
 
+    bool removeEntity(uint64_t id);
+    bool removeEntity(Entity* entity);
+
 private:
     //*Id = entity
     std::unordered_map<uint64_t, Entity::UniquePtr> m_entities;

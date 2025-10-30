@@ -8,7 +8,8 @@
 enum class EntityEnum : uint8_t
 {
     NONE = 0,
-    PLAYER = 1
+    PLAYER = 1,
+    WALL = 2
 };
 
 class Entity

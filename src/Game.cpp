@@ -1,7 +1,15 @@
 #include "Game.hpp"
+#include <filesystem>
 
 Game::Game(const std::string& gameName)
 {
+    std::cout << "Loading all textures" << std::endl;
+
+    for(const auto& entry : std::filesystem::recursive_directory_iterator("./resources/textures/"))
+        AssetsManager::instance().loadTexture(entry.path().string());
+
+    std::cout << "Loaded successfully " << AssetsManager::instance().getTextures().size() << " textures\n"; 
+
     m_window.create(sf::VideoMode({800, 600}), gameName, sf::Style::Default);
     m_view = m_window.getDefaultView();
 
@@ -21,13 +29,10 @@ Game::Game(const std::string& gameName)
 
     auto player = m_scene.getEntity(playerId);
 
-
     if(!player)
         std::cerr << "Failed to find player\n";
     else
         m_camera->setTarget(player);
-
-    player->setTexture(*AssetsManager::instance().loadTexture("./resources/textures/pink.png"));
 
 #if USE_EDITOR
     m_editor = std::make_unique<Editor>(m_window, m_scene);

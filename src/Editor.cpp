@@ -23,6 +23,11 @@ void Editor::processEvents(sf::Event& event)
             m_scene.saveToFile("./resources/maps/default_map.json");
             std::cout << "Scene saved\n";
         }
+        if(keyEvent->code == sf::Keyboard::Key::Delete)
+        {
+            if(m_selectedEntityId)
+                m_scene.removeEntity(m_selectedEntityId);
+        }
     }
 
     ImGui::SFML::ProcessEvent(m_window, event);

@@ -8,6 +8,15 @@ AssetsManager& AssetsManager::instance()
     return instance;
 }
 
+std::string AssetsManager::getTexturePath(const sf::Texture* texture)
+{
+    for(const auto& [path, tex] : m_textures)
+        if(&tex == texture)
+            return path;
+
+    return {};
+}
+
 sf::Texture* AssetsManager::loadTexture(const std::string& filePath)
 {
     if(auto it = m_textures.find(filePath); it != m_textures.end())
