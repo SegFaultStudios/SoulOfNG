@@ -1,0 +1,16 @@
+{
+    "game_objects": [
+        {
+            "name": "Player",
+            "position": [
+                400.0,
+                300.0
+            ],
+            "scale": [
+                0.5,
+                0.5
+            ],
+            "type": 1
+        }
+    ]
+}

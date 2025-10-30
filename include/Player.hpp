@@ -8,13 +8,13 @@ class Player : public Entity
 public:
     Player(const std::string& name = "Player");
     void update(float deltaTime) override;
-    void draw(sf::RenderWindow& target) override;
     void handleInput(sf::Event& event) override;
+
     void speedSetDefault();
 
 private:
-    sf::RectangleShape m_playerMesh;
     float m_speed;
+
 };
 
 #endif //PLAYER_HPP

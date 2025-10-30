@@ -22,4 +22,26 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         sfml-audio
         sfml-network
         nlohmann_json
+        ImGui-SFML::ImGui-SFML
+)
+
+#To copy resources folder inside build directory
+set(RESOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")
+set(OUTPUT_RESOURCE_DIR "${CMAKE_BINARY_DIR}/resources")
+
+if(EXISTS ${RESOURCE_DIR})
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_RESOURCE_DIR}"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory 
+                "${RESOURCE_DIR}" 
+                "${OUTPUT_RESOURCE_DIR}"
+        COMMENT "Copying resources to build directory"
+    )
+    message(STATUS "Resources will be copied to: ${OUTPUT_RESOURCE_DIR}")
+else()
+    message(WARNING "Resource directory not found: ${RESOURCE_DIR}")
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE 
+        USE_EDITOR=1
 )

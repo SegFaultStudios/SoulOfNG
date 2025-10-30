@@ -60,7 +60,7 @@ bool Scene::loadFromFile(const std::string& filePath)
 
         if(type == EntityEnum::PLAYER)
         {
-            auto id = addEntity<Player>("enity");
+            auto id = addEntity<Player>(name);
             entity = getEntity(id);
         }
         else
@@ -139,6 +139,15 @@ bool Scene::saveToFile(const std::string& filePath)
     return true;
 }
 
+bool Scene::doesEntityNameExist(const std::string& name) const
+{
+    for(const auto& [id, entity] : m_entities)
+        if(entity->getName() == name)
+            return true;
+
+    return false;
+}
+
 void Scene::handleInput(sf::Event& event)
 {
     for(const auto& [id, entity] : m_entities)
@@ -151,8 +160,22 @@ void Scene::update(float deltaTime)
         entity->update(deltaTime);
 }
 
+const std::unordered_map<uint64_t, Entity::UniquePtr>& Scene::getEntities() const
+{
+    return m_entities;
+}
+
 void Scene::draw(sf::RenderWindow& target)
 {
     for(const auto& [id, entity] : m_entities)
         entity->draw(target);
+}
+
+uint64_t Scene::findEntityWithName(const std::string& name) const
+{
+    for(const auto& [id, entity] : m_entities)
+        if(entity->getName() == name)
+            return id;
+
+    return 0;
 }
