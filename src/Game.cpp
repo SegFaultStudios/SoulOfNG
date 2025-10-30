@@ -21,10 +21,13 @@ Game::Game(const std::string& gameName)
 
     auto player = m_scene.getEntity(playerId);
 
+
     if(!player)
         std::cerr << "Failed to find player\n";
     else
         m_camera->setTarget(player);
+
+    player->setTexture(*AssetsManager::instance().loadTexture("./resources/textures/pink.png"));
 
 #if USE_EDITOR
     m_editor = std::make_unique<Editor>(m_window, m_scene);
