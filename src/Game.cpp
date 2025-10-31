@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include <filesystem>
+#include "UI/UIButton.hpp"
 
 Game::Game(const std::string& gameName)
 {
@@ -25,14 +26,16 @@ Game::Game(const std::string& gameName)
 
     m_scene.loadFromFile("./resources/maps/default_map.json");
 
-    auto playerId = m_scene.findEntityWithName("Player");
+    // auto playerId = m_scene.findEntityWithName("Player");
 
-    auto player = m_scene.getEntity(playerId);
+    // auto player = m_scene.getEntity(playerId);
 
-    if(!player)
-        std::cerr << "Failed to find player\n";
-    else
-        m_camera->setTarget(player);
+    // if(!player)
+    //     std::cerr << "Failed to find player\n";
+    // else
+    //     m_camera->setTarget(player);
+
+    m_scene.addUI<UIButton>("Button");
 
 #if USE_EDITOR
     m_editor = std::make_unique<Editor>(m_window, m_scene);

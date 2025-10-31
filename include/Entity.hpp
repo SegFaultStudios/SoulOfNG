@@ -7,7 +7,7 @@
 
 enum class EntityEnum : uint8_t
 {
-    NONE = 0,
+    ENTITY = 0,
     PLAYER = 1,
     WALL = 2
 };
@@ -34,19 +34,23 @@ public:
         return m_name;
     }
 
-    virtual void handleInput(sf::Event& event) = 0;
-    virtual void update(float deltaTime) = 0;
+    virtual void handleInput(sf::Event& event) 
+    {
+
+    }
+
+    virtual void update(float deltaTime) 
+    {
+
+    }
 
     void setTexture(const sf::Texture& texture)
     {
-
         sprite_->setTexture(texture);
         sf::Vector2i textureSize(texture.getSize().x, texture.getSize().y );
         sf::IntRect spriteRect = sprite_->getTextureRect();
         spriteRect.size = textureSize;
         sprite_->setTextureRect(spriteRect);
-
-
     }
 
     const sf::Texture& getTexture() const

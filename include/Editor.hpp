@@ -25,6 +25,7 @@ private:
     Scene& m_scene;
 
     uint64_t m_selectedEntityId;
+    uint64_t m_selectedUiWidgetId;
 };
 
 

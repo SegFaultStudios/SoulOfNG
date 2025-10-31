@@ -72,8 +72,8 @@ bool Scene::loadFromFile(const std::string& filePath)
         }
         else
         {   
-            std::cerr << "Something is weird with id" << std::endl;
-            continue;
+            auto id = addEntity<Entity>(name);
+            entity = getEntity(id);
         }
 
         if(!entity)
@@ -135,6 +135,8 @@ bool Scene::saveToFile(const std::string& filePath)
             objectJson["type"] = 1;
         else if(auto wall = dynamic_cast<Wall*>(entity.get()))
             objectJson["type"] = 2;
+        else
+            objectJson["type"] = 0;
 
         // objectJson["rotation"] = {entity->getRotation().x, entity->getRotation().y};
 
@@ -163,16 +165,31 @@ bool Scene::doesEntityNameExist(const std::string& name) const
     return false;
 }
 
+bool Scene::doesUIWidgetNameExists(const std::string& name) const
+{
+    for(const auto& [id, uiWidget] : m_uiWidgets)
+        if(uiWidget->getName() == name)
+            return true;
+
+    return false;
+}
+
 void Scene::handleInput(sf::Event& event)
 {
     for(const auto& [id, entity] : m_entities)
         entity->handleInput(event);
+
+    for(const auto& [id, uiWidget] : m_uiWidgets)
+        uiWidget->handleEvent(event);
 }
 
 void Scene::update(float deltaTime)
 {
     for(const auto& [id, entity] : m_entities)
         entity->update(deltaTime);
+
+    for(const auto& [id, uiWidget] : m_uiWidgets)
+        uiWidget->update(deltaTime);
 }
 
 const std::unordered_map<uint64_t, Entity::UniquePtr>& Scene::getEntities() const
@@ -180,10 +197,18 @@ const std::unordered_map<uint64_t, Entity::UniquePtr>& Scene::getEntities() cons
     return m_entities;
 }
 
+const std::unordered_map<uint64_t, UIWidget::UniquePtr>& Scene::getUiWidgets() const
+{
+    return m_uiWidgets;
+}
+
 void Scene::draw(sf::RenderWindow& target)
 {
     for(const auto& [id, entity] : m_entities)
         entity->draw(target);
+        
+    for(const auto& [id, uiWidget] : m_uiWidgets)
+        target.draw(*uiWidget);
 }
 
 uint64_t Scene::findEntityWithName(const std::string& name) const

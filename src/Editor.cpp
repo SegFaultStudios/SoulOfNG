@@ -24,10 +24,7 @@ void Editor::processEvents(sf::Event& event)
             std::cout << "Scene saved\n";
         }
         if(keyEvent->code == sf::Keyboard::Key::Delete)
-        {
-            if(m_selectedEntityId)
-                m_scene.removeEntity(m_selectedEntityId);
-        }
+            m_scene.removeEntity(m_selectedEntityId);
     }
 
     ImGui::SFML::ProcessEvent(m_window, event);
@@ -55,6 +52,10 @@ void Editor::drawAddManager()
     {
         m_selectedEntityId = m_scene.addEntity<Wall>("Wall");
     }
+    if(ImGui::Button("Add entity"))
+    {
+        m_selectedEntityId = m_scene.addEntity<Entity>("Object");
+    }
 
     ImGui::End();
 }
@@ -62,6 +63,8 @@ void Editor::drawAddManager()
 void Editor::drawHierarchy()
 {
     ImGui::Begin("Hierarchy");
+
+    ImGui::SeparatorText("Entities");
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4, 2));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 2));
@@ -83,6 +86,32 @@ void Editor::drawHierarchy()
 
         if (ImGui::IsItemClicked())
             m_selectedEntityId = id;
+
+        if(nodeOpen)
+            ImGui::TreePop();
+
+        ImGui::PopID();
+    }
+
+    ImGui::SeparatorText("Ui");
+
+    for(auto& [id, uiWidget] : m_scene.getUiWidgets())
+    {
+        ImGui::PushID(id);
+
+        auto widgetName = uiWidget->getName().c_str();
+        
+        bool selected = (id == m_selectedUiWidgetId);
+
+        ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanFullWidth;
+
+        if (selected)
+            nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+        bool nodeOpen = ImGui::TreeNodeEx(widgetName, nodeFlags);
+
+        if (ImGui::IsItemClicked())
+            m_selectedUiWidgetId = id;
 
         if(nodeOpen)
             ImGui::TreePop();
@@ -176,7 +205,6 @@ void Editor::drawSelectedEntityDetails()
             }
             ImGui::EndPopup();
     }
-
 
     if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
