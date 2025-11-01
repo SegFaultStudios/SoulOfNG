@@ -31,7 +31,7 @@ public:
         static_assert(!std::is_abstract_v<T>, "Cannot add abstract entity");
         static_assert(std::is_base_of_v<Entity, T>, "T must derive from Entity class");
 
-        uint64_t id = m_entities.size();
+        uint64_t id = ++m_nextEntityId;
 
         std::string finalName = entityName;
 
@@ -67,7 +67,7 @@ public:
         static_assert(!std::is_abstract_v<T>, "Cannot add abstract entity");
         static_assert(std::is_base_of_v<UIWidget, T>, "T must derive from Entity class");
 
-        uint64_t id = m_uiWidgets.size();
+        uint64_t id = ++m_nextUiWidgetId;
 
         std::string finalName = uiName;
 
@@ -104,6 +104,8 @@ public:
 
 private:
     //*Id = entity
+    uint64_t m_nextEntityId = 0;
+    uint64_t m_nextUiWidgetId = 0;
     std::unordered_map<uint64_t, Entity::UniquePtr> m_entities;
     std::unordered_map<uint64_t, UIWidget::UniquePtr> m_uiWidgets;
 };
