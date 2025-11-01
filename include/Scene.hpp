@@ -83,6 +83,7 @@ public:
 
 
     Entity* getEntity(uint64_t id) const;
+    UIWidget* getUiWidget(uint64_t id) const;
 
     bool loadFromFile(const std::string& filePath);
     bool saveToFile(const std::string& filePath);
@@ -91,7 +92,7 @@ public:
     
     uint64_t findEntityWithName(const std::string& name) const;
 
-    void handleInput(sf::Event& event);
+    void handleInput(sf::Event& event, const sf::RenderWindow& window);
     void update(float deltaTime);
     void draw(sf::RenderWindow& target);
 

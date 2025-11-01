@@ -12,7 +12,6 @@ Game::Game(const std::string& gameName)
     std::cout << "Loaded successfully " << AssetsManager::instance().getTextures().size() << " textures\n"; 
 
     m_window.create(sf::VideoMode({800, 600}), gameName, sf::Style::Default);
-    m_view = m_window.getDefaultView();
 
     sf::Image image({20, 20}, sf::Color::White);
     sf::Texture whiteTexture;
@@ -26,14 +25,14 @@ Game::Game(const std::string& gameName)
 
     m_scene.loadFromFile("./resources/maps/default_map.json");
 
-    // auto playerId = m_scene.findEntityWithName("Player");
+    auto playerId = m_scene.findEntityWithName("Player");
 
-    // auto player = m_scene.getEntity(playerId);
+    auto player = m_scene.getEntity(playerId);
 
-    // if(!player)
-    //     std::cerr << "Failed to find player\n";
-    // else
-    //     m_camera->setTarget(player);
+    if(!player)
+        std::cerr << "Failed to find player\n";
+    else
+        m_camera->setTarget(player);
 
     m_scene.addUI<UIButton>("Button");
 
@@ -47,28 +46,36 @@ void Game::run()
     sf::Clock clock;
     float deltaTime = 0.0f;
 
+    sf::VertexArray rayLine(sf::PrimitiveType::Lines, 2);
+    rayLine[0].color = sf::Color::Red;
+    rayLine[1].color = sf::Color::Green;
+    
     while (m_window.isOpen())
     {
         sf::Time time = clock.restart();
         deltaTime = time.asSeconds();
+
+        if(auto target = m_camera->getTarget())
+            rayLine[1].position = target->getPosition();
         
         while (std::optional event = m_window.pollEvent())
         {
 #ifdef USE_EDITOR
             m_editor->processEvents(event.value());
 #endif
+            m_camera->handleEvent(event.value());
+
             if (event->is<sf::Event::Closed>())
                 m_window.close();
 
-            if (auto* resized = event->getIf<sf::Event::Resized>()) 
+            if(auto mouseEvent = event.value().getIf<sf::Event::MouseMoved>())
             {
-                sf::Vector2f newSize(resized->size.x, resized->size.y);
-                m_view.setSize(newSize);
-
-                m_window.setView(m_view);
+                sf::Vector2i mousePosition(mouseEvent->position.x, mouseEvent->position.y);
+                auto point = m_window.mapPixelToCoords(mousePosition);
+                rayLine[0].position = point;
             }
 
-            m_scene.handleInput(event.value());
+            m_scene.handleInput(event.value(), m_window);
         }
 
         m_camera->update(deltaTime);
@@ -79,12 +86,17 @@ void Game::run()
 
         m_window.clear();
 
+        m_window.draw(rayLine);
+
         m_scene.draw(m_window);
+
 
 #ifdef USE_EDITOR
         m_editor->draw();
 #endif
         m_window.display();
+
+        // m_window.setTitle(std::to_string(1.0f / deltaTime));
 
         // std::cout << "Frame time: " << deltaTime * 1000.0f << "ms" << std::endl; //How much time took to render a frame
         // std::cout << "FPS: " << 1.0f / deltaTime << std::endl; //FPS counter

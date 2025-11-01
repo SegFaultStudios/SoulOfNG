@@ -9,8 +9,13 @@ class Camera
 public:
     Camera(sf::RenderWindow& window);
 
+    void handleEvent(const sf::Event& event);
+
     //Set target which camera follows
     void setTarget(Entity* target);
+    Entity* getTarget() const;
+
+    const sf::View& getView() const;
 
     void update(float deltaTime);
 private:

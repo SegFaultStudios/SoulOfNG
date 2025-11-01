@@ -16,28 +16,45 @@ const std::string& UIWidget::getName() const
     return m_name;
 }
 
-void UIWidget::handleEvent(const sf::Event& event)
+void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
 {
     if(!m_isVisible)
         return;
 
     if(auto mouseEvent = event.getIf<sf::Event::MouseMoved>())
     {
-        sf::Vector2f mousePosition(mouseEvent->position.x, mouseEvent->position.y);
+        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
 
-        bool isHovered = getBoundingBox().contains(mousePosition);
+        auto mouse = window.mapPixelToCoords(mousePosition);
 
-        if(isHovered && !m_isHovered && m_onHover)
-            m_onHover();
-        else if(!isHovered && m_isHovered && m_onLeave)
-            m_onLeave();
+        bool isHovered = getBoundingBox().contains(sf::Vector2f{mouse});
+
+        if(isHovered && !m_isHovered)
+        {
+            handleCustomEvent(CustomEvent::HOVERED);
+
+            if(m_onHover)
+                m_onHover();
+        }
+        else if(!isHovered && m_isHovered)
+        {
+            handleCustomEvent(CustomEvent::LEAVE);
+
+            if(m_onLeave)
+                m_onLeave();
+        }
 
         m_isHovered = isHovered;
     }
     else if(auto mouseClick = event.getIf<sf::Event::MouseButtonPressed>())
     {
-        if(mouseClick->button == sf::Mouse::Button::Left && m_isHovered && m_onClick)
-            m_onClick();
+        if(mouseClick->button == sf::Mouse::Button::Left && m_isHovered)
+        {   
+            handleCustomEvent(CustomEvent::CLICKED);
+
+            if(m_onClick)
+                m_onClick();
+        }
     }
 }
 

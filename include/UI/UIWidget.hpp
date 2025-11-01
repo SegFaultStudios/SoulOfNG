@@ -6,6 +6,13 @@
 #include <memory>
 #include <functional>
 
+enum class CustomEvent
+{
+    HOVERED,
+    LEAVE,
+    CLICKED
+};
+
 class UIWidget : public sf::Drawable
 {
 public:
@@ -20,9 +27,9 @@ public:
     void setOnHover(const EventCallback& callback);
     void setOnLeave(const EventCallback& callback);
 
-    void setPosition(const sf::Vector2f& position);
+    virtual void setPosition(const sf::Vector2f& position);
     void setVisible(bool isVisible);
-    void setSize(const sf::Vector2f& size);
+    virtual void setSize(const sf::Vector2f& size);
     void setName(const std::string& name);
 
     const std::string& getName() const;
@@ -33,7 +40,9 @@ public:
     void hide();
     void show();
 
-    virtual void handleEvent(const sf::Event& event);
+    //Called for inherited widgets by UIWidget
+    virtual void handleCustomEvent(CustomEvent event) {}
+    virtual void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
     virtual void update(float deltaTime);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;

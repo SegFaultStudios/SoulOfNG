@@ -15,6 +15,13 @@ Entity* Scene::getEntity(uint64_t id) const
     return it == m_entities.end() ? nullptr : it->second.get();
 }
 
+UIWidget* Scene::getUiWidget(uint64_t id) const
+{
+    auto it = m_uiWidgets.find(id);
+
+    return it == m_uiWidgets.end() ? nullptr : it->second.get();
+}
+
 bool Scene::loadFromFile(const std::string& filePath)
 {
     std::ifstream file(filePath);
@@ -174,13 +181,13 @@ bool Scene::doesUIWidgetNameExists(const std::string& name) const
     return false;
 }
 
-void Scene::handleInput(sf::Event& event)
+void Scene::handleInput(sf::Event& event, const sf::RenderWindow& window)
 {
     for(const auto& [id, entity] : m_entities)
         entity->handleInput(event);
 
     for(const auto& [id, uiWidget] : m_uiWidgets)
-        uiWidget->handleEvent(event);
+        uiWidget->handleEvent(event, window);
 }
 
 void Scene::update(float deltaTime)
