@@ -86,6 +86,10 @@ public:
     {
         return m_scale;
     }
+
+    sf::FloatRect getGlobalBounds() {
+        return sprite_->getGlobalBounds();
+    }
 private:
     sf::Vector2f m_position{0.0f, 0.0f};
     sf::Vector2f m_scale{0.5f, 0.5f};

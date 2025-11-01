@@ -1,11 +1,9 @@
 #include "Player.hpp"
 #include "SFML/Window/Keyboard.hpp"
+
 Player::Player(const std::string& name) : Entity(name)
 {
-
-
     m_speed = 200;
-
 }
 
 void Player::handleInput(sf::Event& event)
@@ -19,6 +17,7 @@ void Player::setSpeedDefault() {
 
 void Player::update(float deltaTime)
 {
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::LShift)) {
         m_speed = 100;
     } else {
@@ -36,5 +35,11 @@ void Player::update(float deltaTime)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) {
         setPosition({getPosition().x, getPosition().y + m_speed * deltaTime});
     }
+
+
+
 }
+
+
+
 

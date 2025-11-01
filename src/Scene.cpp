@@ -192,11 +192,33 @@ void Scene::handleInput(sf::Event& event, const sf::RenderWindow& window)
 
 void Scene::update(float deltaTime)
 {
+
+    Player* player = nullptr;
+    sf::Vector2f oldPlayerPos;
+
+    for (auto& [id, entity] : m_entities) {
+        if (Player *p = dynamic_cast<Player*>(entity.get())) {
+            player = p;
+            oldPlayerPos = player->getPosition();
+            break;
+        }
+    }
+
     for(const auto& [id, entity] : m_entities)
         entity->update(deltaTime);
 
     for(const auto& [id, uiWidget] : m_uiWidgets)
         uiWidget->update(deltaTime);
+    for (auto& [id, entity] : m_entities) {
+        if (dynamic_cast<Wall*>(entity.get())) {
+            if (player->getGlobalBounds().findIntersection(entity->getGlobalBounds())) {
+                player->setPosition(oldPlayerPos);
+                break;
+            }
+        }
+    }
+
+
 }
 
 const std::unordered_map<uint64_t, Entity::UniquePtr>& Scene::getEntities() const
