@@ -2,8 +2,13 @@
 #include <filesystem>
 #include "UI/UIButton.hpp"
 
+#include "Layers/MainGameLayer.hpp"
+#include "Layers/MainMenuLayer.hpp"
+
 Game::Game(const std::string& gameName)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     std::cout << "Loading all textures" << std::endl;
 
     for(const auto& entry : std::filesystem::recursive_directory_iterator("./resources/textures/"))
@@ -21,24 +26,20 @@ Game::Game(const std::string& gameName)
     else
         std::cerr << "Failed to load default texture\n";
 
-    m_camera = std::make_unique<Camera>(m_window);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    
+    std::cout << "Game loading took: " << duration.count() << " microseconds\n";
+    std::cout << "Game loading took: " << duration.count() / 1000.0 << " milliseconds\n";
+    std::cout << "Game loading took: " << duration.count() / 1000000.0 << " seconds\n";
 
-    m_scene.loadFromFile("./resources/maps/default_map.json");
+    m_layers.emplace_back(std::make_unique<MainMenuLayer>(m_window));
+    m_layers.emplace_back(std::make_unique<MainGameLayer>(m_window));
 
-    auto playerId = m_scene.findEntityWithName("Player");
+    //Maybe this is not a good decision
+    m_currentLayer = m_layers.begin();
 
-    auto player = m_scene.getEntity(playerId);
-
-    if(!player)
-        std::cerr << "Failed to find player\n";
-    else
-        m_camera->setTarget(player);
-
-    m_scene.addUI<UIButton>("Button");
-
-#if USE_EDITOR
-    m_editor = std::make_unique<Editor>(m_window, m_scene);
-#endif
+    m_currentLayer->get()->onStart();
 }
 
 void Game::run()
@@ -48,60 +49,38 @@ void Game::run()
     sf::Clock clock;
     float deltaTime = 0.0f;
 
-    sf::VertexArray rayLine(sf::PrimitiveType::Lines, 2);
-    rayLine[0].color = sf::Color::Red;
-    rayLine[1].color = sf::Color::Green;
 
-    
     while (m_window.isOpen())
     {
-        sf::Time time = clock.restart();
-        deltaTime = time.asSeconds();
-
-        if(auto target = m_camera->getTarget())
-            rayLine[1].position = target->getPosition();
-        
-        while (std::optional event = m_window.pollEvent())
+        if(m_currentLayer->get()->isOver())
         {
-#ifdef USE_EDITOR
-            m_editor->processEvents(event.value());
-#endif
-            m_camera->handleEvent(event.value());
+            if(m_currentLayer == m_layers.end() - 1)
+            {
+                std::cerr << "No more layers. Terminating game..." << std::endl;
+                return;
+            }
+
+            m_currentLayer->get()->onEnd();
+
+            ++m_currentLayer;
+
+            m_currentLayer->get()->onStart();
+        }
+
+        deltaTime = clock.restart().asSeconds();
+
+        while (auto event = m_window.pollEvent())
+        {
+            m_currentLayer->get()->handleEvent(event.value());
 
             if (event->is<sf::Event::Closed>())
                 m_window.close();
-
-            if(auto mouseEvent = event.value().getIf<sf::Event::MouseMoved>())
-            {
-                sf::Vector2i mousePosition(mouseEvent->position.x, mouseEvent->position.y);
-                auto point = m_window.mapPixelToCoords(mousePosition);
-                rayLine[0].position = point;
-            }
-
-            m_scene.handleInput(event.value(), m_window);
         }
 
-        m_camera->update(deltaTime);
-#ifdef USE_EDITOR
-        m_editor->update(time);
-#endif 
-        m_scene.update(deltaTime);
+        m_currentLayer->get()->update(deltaTime);
 
         m_window.clear();
-
-        m_window.draw(rayLine);
-
-        m_scene.draw(m_window);
-
-
-#ifdef USE_EDITOR
-        m_editor->draw();
-#endif
+        m_currentLayer->get()->draw(m_window);
         m_window.display();
-
-        // m_window.setTitle(std::to_string(1.0f / deltaTime));
-
-        // std::cout << "Frame time: " << deltaTime * 1000.0f << "ms" << std::endl; //How much time took to render a frame
-        // std::cout << "FPS: " << 1.0f / deltaTime << std::endl; //FPS counter
     }
 }

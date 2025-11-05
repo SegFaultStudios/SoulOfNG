@@ -182,7 +182,7 @@ bool Scene::doesUIWidgetNameExists(const std::string& name) const
     return false;
 }
 
-void Scene::handleInput(sf::Event& event, const sf::RenderWindow& window)
+void Scene::handleInput(const sf::Event& event, const sf::RenderWindow& window)
 {
     for(const auto& [id, entity] : m_entities)
         entity->handleInput(event);
@@ -193,7 +193,6 @@ void Scene::handleInput(sf::Event& event, const sf::RenderWindow& window)
 
 void Scene::update(float deltaTime)
 {
-
     Player* player = nullptr;
     sf::Vector2f oldPlayerPos;
 
@@ -219,8 +218,6 @@ void Scene::update(float deltaTime)
             }
         }
     }
-
-
 }
 
 void Scene::setCurrentRoom(std::unique_ptr<Room> room) {
@@ -245,9 +242,15 @@ void Scene::draw(sf::RenderWindow& target)
 {
     for(const auto& [id, entity] : m_entities)
         entity->draw(target);
-        
+
+    //UI elements should always be on the screen, so use default view here
+    auto currentView = target.getView();
+    target.setView(target.getDefaultView());
+
     for(const auto& [id, uiWidget] : m_uiWidgets)
         target.draw(*uiWidget);
+
+    target.setView(currentView);
 }
 
 uint64_t Scene::findEntityWithName(const std::string& name) const

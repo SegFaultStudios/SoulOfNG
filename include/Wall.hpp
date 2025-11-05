@@ -10,7 +10,7 @@ class Wall : public Entity
 public:
     Wall(const std::string& name);
     void update(float deltaTime) override;
-    void handleInput(sf::Event& event) override;
+    void handleInput(const sf::Event& event) override;
 };
 
 #endif //WALL_HPP
