@@ -37,9 +37,11 @@ sf::Texture* AssetsManager::loadTexture(const std::string& filePath)
     return &m_textures[filePath];
 }
 
-void AssetsManager::addTexture(const sf::Texture& texture, const std::string& filePath)
+sf::Texture* AssetsManager::addTexture(const sf::Texture& texture, const std::string& filePath)
 {
     m_textures[filePath] = texture;
+
+    return &m_textures[filePath];
 }
 
 const std::unordered_map<std::string, sf::Texture>& AssetsManager::getTextures() const

@@ -46,6 +46,44 @@ public:
 
         return id;
     }
+
+    //After this uiWidget will become invalid
+    template<typename T>
+    uint64_t addUI(std::unique_ptr<T> uiWidget)
+    {
+        auto generateUniqueName = [this](const std::string& baseName)
+        {
+            int counter = 1;
+            std::string newName;
+            
+            do 
+            {
+                newName = baseName + "_" + (counter < 10 ? "0" : "") + std::to_string(counter);
+                counter++;
+            }
+            while (doesUIWidgetNameExists(newName));
+            
+            return newName;
+        };
+
+        static_assert(!std::is_abstract_v<T>, "Cannot add abstract widget");
+        static_assert(std::is_base_of_v<UIWidget, T>, "T must derive from Widget class");
+
+        uint64_t id = ++m_nextUiWidgetId;
+
+        std::string finalName = uiWidget->getName();
+
+        if(doesUIWidgetNameExists(uiWidget->getName()))
+        {
+            finalName = generateUniqueName(uiWidget->getName());
+            uiWidget->setName(finalName);
+        }
+
+        m_uiWidgets[id] = std::move(uiWidget);
+
+        return id;
+    }
+
     template<typename T, typename... Args>
     uint64_t addUI(const std::string& uiName, Args&&... args)
     {
@@ -64,8 +102,8 @@ public:
             return newName;
         };
 
-        static_assert(!std::is_abstract_v<T>, "Cannot add abstract entity");
-        static_assert(std::is_base_of_v<UIWidget, T>, "T must derive from Entity class");
+        static_assert(!std::is_abstract_v<T>, "Cannot add abstract widget");
+        static_assert(std::is_base_of_v<UIWidget, T>, "T must derive from Widget class");
 
         uint64_t id = ++m_nextUiWidgetId;
 
@@ -81,8 +119,30 @@ public:
         return id;
     }
 
+    template<typename T>
+    T* getEntity(uint64_t id) const
+    {
+        auto entity = getEntity(id);
+
+        if(!entity)
+            return nullptr;
+        
+        return dynamic_cast<T*>(entity);
+    }
 
     Entity* getEntity(uint64_t id) const;
+
+    template<typename T>
+    T* getUiWidget(uint64_t id) const
+    {
+        auto widget = getUiWidget(id);
+
+        if(!widget)
+            return nullptr;
+
+        return dynamic_cast<T*>(widget);
+    }
+
     UIWidget* getUiWidget(uint64_t id) const;
 
     bool loadFromFile(const std::string& filePath);
@@ -92,7 +152,7 @@ public:
     
     uint64_t findEntityWithName(const std::string& name) const;
 
-    void handleInput(sf::Event& event, const sf::RenderWindow& window);
+    void handleInput(const sf::Event& event, const sf::RenderWindow& window);
     void update(float deltaTime);
     void draw(sf::RenderWindow& target);
 

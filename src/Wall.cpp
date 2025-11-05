@@ -10,7 +10,7 @@ void Wall::update(float deltaTime)
 
 }
 
-void Wall::handleInput(sf::Event& event)
+void Wall::handleInput(const sf::Event& event)
 {
 
 }

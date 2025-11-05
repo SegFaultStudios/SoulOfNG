@@ -34,7 +34,7 @@ public:
         return m_name;
     }
 
-    virtual void handleInput(sf::Event& event) 
+    virtual void handleInput(const sf::Event& event) 
     {
 
     }
@@ -46,11 +46,11 @@ public:
 
     void setTexture(const sf::Texture& texture)
     {
-        sprite_->setTexture(texture);
-        sf::Vector2i textureSize(texture.getSize().x, texture.getSize().y );
-        sf::IntRect spriteRect = sprite_->getTextureRect();
-        spriteRect.size = textureSize;
-        sprite_->setTextureRect(spriteRect);
+        sf::Vector2f currentScale = sprite_->getScale();
+        
+        sprite_->setTexture(texture, true);
+
+        sprite_->setScale(currentScale); 
     }
 
     const sf::Texture& getTexture() const
@@ -87,7 +87,8 @@ public:
         return m_scale;
     }
 
-    sf::FloatRect getGlobalBounds() {
+    sf::FloatRect getGlobalBounds() 
+    {
         return sprite_->getGlobalBounds();
     }
 private:

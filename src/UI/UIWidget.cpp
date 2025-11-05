@@ -25,9 +25,15 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
     {
         sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
 
-        auto mouse = window.mapPixelToCoords(mousePosition);
+        // std::cout << "Mouse position: X: " << mousePosition.x << " Y: " << mousePosition.y << std::endl;
 
-        bool isHovered = getBoundingBox().contains(sf::Vector2f{mouse});
+        // auto mouse = window.mapCoordsToPixel({mousePosition.x, mousePosition.y});
+
+        // std::cout << "Converted mouse position X: " << mouse.x << " Y: " << mousePosition.y << std::endl;
+
+        // std::cout << "Position: X: " << this->getPosition().x << " Y: " << this->getPosition().y << std::endl;
+
+        bool isHovered = getBoundingBox().contains(sf::Vector2f{mousePosition.x, mousePosition.y});
 
         if(isHovered && !m_isHovered)
         {
