@@ -18,7 +18,7 @@ public:
     using SharedPtr = std::shared_ptr<Entity>;
     using UniquePtr = std::unique_ptr<Entity>;
 
-    Entity(const std::string& name) : m_name(name)
+    explicit Entity(const std::string& name) : m_name(name)
     {
         //Setting default white texture
         sprite_ = std::make_unique<sf::Sprite>(*AssetsManager::instance().getTexture("default"));
@@ -39,18 +39,18 @@ public:
 
     }
 
-    virtual void update(float deltaTime) 
+    virtual void update(float deltaTime)
     {
 
     }
 
     void setTexture(const sf::Texture& texture)
     {
-        sf::Vector2f currentScale = sprite_->getScale();
+        sf::Vector2f currentScale = getScale();
         
         sprite_->setTexture(texture, true);
 
-        sprite_->setScale(currentScale); 
+        setScale(currentScale);
     }
 
     const sf::Texture& getTexture() const
