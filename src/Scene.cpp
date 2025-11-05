@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <random>
 
 #include "Player.hpp"
 #include "Wall.hpp"
@@ -209,6 +210,7 @@ void Scene::update(float deltaTime)
 
     for(const auto& [id, uiWidget] : m_uiWidgets)
         uiWidget->update(deltaTime);
+
     for (auto& [id, entity] : m_entities) {
         if (dynamic_cast<Wall*>(entity.get())) {
             if (player->getGlobalBounds().findIntersection(entity->getGlobalBounds())) {
@@ -220,6 +222,14 @@ void Scene::update(float deltaTime)
 
 
 }
+
+void Scene::setCurrentRoom(std::unique_ptr<Room> room) {
+    m_currentRoom = std::move(room);
+
+}
+
+
+
 
 const std::unordered_map<uint64_t, Entity::UniquePtr>& Scene::getEntities() const
 {

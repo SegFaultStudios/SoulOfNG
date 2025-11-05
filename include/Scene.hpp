@@ -2,10 +2,12 @@
 #define SCENE_HPP
 
 #include "Entity.hpp"
+#include "Room.hpp"
 #include "UI/UIWidget.hpp"
 
 #include <memory>
 #include <unordered_map>
+
 
 class Scene
 {
@@ -102,12 +104,18 @@ public:
     bool removeEntity(uint64_t id);
     bool removeEntity(Entity* entity);
 
+    void setCurrentRoom(std::unique_ptr<Room> room);
+
+
 private:
     //*Id = entity
     uint64_t m_nextEntityId = 0;
     uint64_t m_nextUiWidgetId = 0;
     std::unordered_map<uint64_t, Entity::UniquePtr> m_entities;
     std::unordered_map<uint64_t, UIWidget::UniquePtr> m_uiWidgets;
+
+
+
 };
 
 

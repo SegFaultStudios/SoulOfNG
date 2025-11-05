@@ -3,7 +3,7 @@
 
 Player::Player(const std::string& name) : Entity(name)
 {
-    m_speed = 200;
+    m_speed = 500;
 }
 
 void Player::handleInput(sf::Event& event)
@@ -12,7 +12,7 @@ void Player::handleInput(sf::Event& event)
 }
 
 void Player::setSpeedDefault() {
-    m_speed = 200;
+    m_speed = 2000;
 }
 
 void Player::update(float deltaTime)

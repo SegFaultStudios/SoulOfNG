@@ -43,12 +43,15 @@ Game::Game(const std::string& gameName)
 
 void Game::run()
 {
+    auto room = std::make_unique<Room>(sf::Vector2f(100, 100), sf::Vector2f(100, 100));
+
     sf::Clock clock;
     float deltaTime = 0.0f;
 
     sf::VertexArray rayLine(sf::PrimitiveType::Lines, 2);
     rayLine[0].color = sf::Color::Red;
     rayLine[1].color = sf::Color::Green;
+
     
     while (m_window.isOpen())
     {

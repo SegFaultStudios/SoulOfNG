@@ -3,6 +3,7 @@
 
 Wall::Wall(const std::string& name) : Entity(name)
 {
+
 }
 
 void Wall::update(float deltaTime)
