@@ -49,6 +49,44 @@ public:
         return id;
     }
 
+    template<typename T>
+    uint64_t addEntity(std::unique_ptr<T> entity)
+    {
+        auto generateUniqueName = [this](const std::string& baseName)
+        {
+            int counter = 1;
+            std::string newName;
+            
+            do 
+            {
+                newName = baseName + "_" + (counter < 10 ? "0" : "") + std::to_string(counter);
+                counter++;
+            }
+            while (doesEntityNameExist(newName));
+            
+            return newName;
+        };
+
+        static_assert(!std::is_abstract_v<T>, "Cannot add abstract entity");
+        static_assert(std::is_base_of_v<Entity, T>, "T must derive from Entity class");
+
+        uint64_t id = ++m_nextEntityId;
+
+        std::string finalName = entity->getName();
+
+        if(doesEntityNameExist(entity->getName()))
+        {
+            finalName = generateUniqueName(entity->getName());
+            entity->setName(finalName);
+        }
+
+        m_entities[id] = std::move(entity);
+
+        return id;
+    }
+
+
+
     //After this uiWidget will become invalid
     template<typename T>
     uint64_t addUI(std::unique_ptr<T> uiWidget)
