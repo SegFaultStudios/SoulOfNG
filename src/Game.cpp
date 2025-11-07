@@ -44,7 +44,6 @@ Game::Game(const std::string& gameName)
 
 void Game::run()
 {
-    auto room = std::make_unique<Room>(sf::Vector2f(100, 100), sf::Vector2f(100, 100));
 
     sf::Clock clock;
     float deltaTime = 0.0f;

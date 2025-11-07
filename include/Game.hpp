@@ -25,7 +25,7 @@ public:
     void run();
 private:
     sf::RenderWindow m_window;
-    Scene m_scene;
+    //Scene m_scene;
     std::unique_ptr<Camera> m_camera{nullptr};
 #if USE_EDITOR
     std::unique_ptr<Editor> m_editor{nullptr};

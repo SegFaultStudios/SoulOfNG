@@ -59,6 +59,12 @@ void MainGameLayer::handleEvent(sf::Event& event)
 
 void MainGameLayer::onStart()
 {
+
+    auto& roomWalls = m_room.getWalls();
+    for (auto& wall : roomWalls) {
+        m_scene.addEntity(std::move(wall));
+    }
+
     m_camera = std::make_unique<Camera>(m_window);
 
     m_scene.loadFromFile("./resources/maps/default_map.json");

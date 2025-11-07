@@ -220,11 +220,6 @@ void Scene::update(float deltaTime)
     }
 }
 
-void Scene::setCurrentRoom(std::unique_ptr<Room> room) {
-    m_currentRoom = std::move(room);
-
-}
-
 
 
 

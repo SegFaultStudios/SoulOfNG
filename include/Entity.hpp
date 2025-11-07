@@ -82,6 +82,12 @@ public:
         sprite_->setScale(scale);
     }
 
+    virtual void setOrigin(const sf::Vector2f& origin)
+    {
+        m_origin = origin;
+        sprite_->setOrigin(origin);
+    }
+
     const sf::Vector2f& getScale() const
     {
         return m_scale;
@@ -94,6 +100,7 @@ public:
 private:
     sf::Vector2f m_position{0.0f, 0.0f};
     sf::Vector2f m_scale{0.5f, 0.5f};
+    sf::Vector2f m_origin{0.0f, 0.0f};
     //TODO later
     // sf::Vector2f m_rotation; 
 

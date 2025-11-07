@@ -4,6 +4,7 @@
 #include "Layers/Layer.hpp"
 #include "Camera.hpp"
 #include "Scene.hpp"
+#include "Room.hpp"
 #include "AssetsManager.hpp"
 
 #if USE_EDITOR
@@ -24,6 +25,10 @@ private:
     sf::VertexArray m_rayLine;
     sf::RenderWindow& m_window;
     Scene m_scene;
+    Room m_room{sf::Vector2f(0, 0), sf::Vector2f(500, 500)};
+
+
+
     std::unique_ptr<Camera> m_camera{nullptr};
 #if USE_EDITOR
     std::unique_ptr<Editor> m_editor{nullptr};
