@@ -7,6 +7,7 @@
 
 class Editor
 {
+#if USE_EDITOR
 public:
     Editor(sf::RenderWindow& window, Scene& scene);
 
@@ -26,6 +27,7 @@ private:
 
     uint64_t m_selectedEntityId;
     uint64_t m_selectedUiWidgetId;
+#endif
 };
 
 

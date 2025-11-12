@@ -83,8 +83,6 @@ public:
         return id;
     }
 
-
-
     //After this uiWidget will become invalid
     template<typename T>
     uint64_t addUI(std::unique_ptr<T> uiWidget)

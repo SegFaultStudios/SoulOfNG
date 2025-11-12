@@ -47,8 +47,14 @@ public:
     void setTexture(const sf::Texture& texture)
     {
         sf::Vector2f currentScale = getScale();
+
+        //Set texture rect from currentScale
         
         sprite_->setTexture(texture, true);
+
+        // sf::IntRect rect{{0, 0}, {getScale().x, getScale().y}};
+ 
+        // sprite_->setTextureRect(rect);
 
         setScale(currentScale);
     }

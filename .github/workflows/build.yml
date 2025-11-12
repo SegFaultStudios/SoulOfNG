@@ -1,0 +1,120 @@
+name: Build SoulfOfNG
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+
+      - name: Verify and Update Submodules
+        run: |
+          git submodule update --init --recursive
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmake build-essential libgl1-mesa-dev ninja-build libvulkan-dev vulkan-tools
+          sudo apt install -y libwayland-dev wayland-protocols extra-cmake-modules
+          sudo apt install -y libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+          sudo apt install -y libxkbcommon-dev
+          sudo apt install -y pkg-config
+
+      - name: Configure and Build
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSHOULD_USE_EDITOR=OFF && cmake --build build
+      
+      - name: Install to Staging Dir
+        run: |
+          mkdir -p build/lib
+          cmake --install build --prefix staging/SoulfOfNG
+
+      - name: Create Archive
+        run: |
+          tar -czvf SoulfOfNG-linux.tar.gz -C staging SoulfOfNG
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoulfOfNG-linux
+          path: SoulfOfNG-linux.tar.gz
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+
+      - name: Verify and Update Submodules
+        run: |
+          git submodule update --init --recursive
+          git submodule status
+
+      - name: Configure and Build
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSHOULD_USE_EDITOR=OFF"
+          cmake --build build --config Release
+
+      - name: Install to Staging Dir
+        run: |
+          cmake --install build --prefix staging/SoulfOfNG
+
+      - name: Create Archive
+        run: |
+          tar -czvf SoulfOfNG-windows.tar.gz -C staging SoulfOfNG
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoulfOfNG-windows
+          path: SoulfOfNG-windows.tar.gz
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+
+      - name: Verify and Update Submodules
+        run: |
+          git submodule update --init --recursive
+          git submodule status
+          ls -la external/
+
+      - name: Install Dependencies
+        run: |
+          brew uninstall cmake || true
+          brew install cmake ninja freetype glfw
+
+      - name: Configure and Build
+        run: |
+          cmake -S . -B build -G Ninja -DSHOULD_USE_EDITOR=OFF"
+          cmake --build build
+
+      - name: Install to Staging Dir
+        run: |
+          cmake --install build --prefix staging/SoulfOfNG
+
+      - name: Create Archive
+        run: |
+          tar -czvf SoulfOfNG-macos.tar.gz -C staging SoulfOfNG
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SoulfOfNG-macos
+          path: SoulfOfNG-macos.tar.gz

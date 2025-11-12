@@ -1,4 +1,7 @@
+#if USE_EDITOR
+
 #include "Editor.hpp"
+
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <cstring>
@@ -255,3 +258,5 @@ void Editor::drawSelectedEntityDetails()
 
     ImGui::End();    
 }
+
+#endif

@@ -14,7 +14,7 @@ void MainGameLayer::update(float deltaTime)
     sf::Time sfTimeDelta = sf::seconds(deltaTime);
 
     m_camera->update(deltaTime);
-#ifdef USE_EDITOR
+#if USE_EDITOR
     m_editor->update(sfTimeDelta);
 #endif 
     m_scene.update(deltaTime);
@@ -27,7 +27,7 @@ void MainGameLayer::draw(sf::RenderWindow& window)
 {
     m_scene.draw(window);
 
-#ifdef USE_EDITOR
+#if USE_EDITOR
         m_editor->draw();
 #endif
 
@@ -41,7 +41,7 @@ void MainGameLayer::draw(sf::RenderWindow& window)
 
 void MainGameLayer::handleEvent(sf::Event& event)
 {
-#ifdef USE_EDITOR
+#if USE_EDITOR
     m_editor->processEvents(event);
 #endif
 
@@ -73,7 +73,11 @@ void MainGameLayer::onStart()
 
     //Create default player??
     if(!player)
-        std::cerr << "Failed to find player\n";
+    {
+        std::cerr << "Failed to find player. Creating default player...\n";
+        playerId = m_scene.addEntity<Player>("Player");
+        player = m_scene.getEntity<Player>(playerId);
+    }
     else
     {
         player->setInventory(inventory);

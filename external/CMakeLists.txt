@@ -18,6 +18,10 @@ target_include_directories(imgui PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/imgui/backends
 )
 
-set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui/)
-set(IMGUI_SFML_FIND_SFML OFF CACHE BOOL "Use find_package to find SFML" FORCE)
-add_subdirectory(imgui-sfml)
+message("Use editor: ${SHOULD_USE_EDITOR}")
+
+if(SHOULD_USE_EDITOR)
+    set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui/)
+    set(IMGUI_SFML_FIND_SFML OFF CACHE BOOL "Use find_package to find SFML" FORCE)
+    add_subdirectory(imgui-sfml)
+endif()

@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+set(SHOULD_USE_EDITOR ON CACHE BOOL "Use editor or no")
+
+message("Use editor: " ${SHOULD_USE_EDITOR})
+
 add_subdirectory(external)
 
 file(GLOB_RECURSE PROJECT_HEADERS  ${INCLUDE_DIR}/*.h ${INCLUDE_DIR}/*.hpp)
@@ -22,8 +26,11 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         sfml-audio
         sfml-network
         nlohmann_json
-        ImGui-SFML::ImGui-SFML
 )
+
+if(SHOULD_USE_EDITOR)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ImGui-SFML::ImGui-SFML)
+endif()
 
 #To copy resources folder inside build directory
 set(RESOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")
@@ -43,5 +50,5 @@ else()
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE 
-        USE_EDITOR=1
+        USE_EDITOR=${SHOULD_USE_EDITOR}
 )

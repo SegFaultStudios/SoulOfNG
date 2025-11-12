@@ -1,9 +1,9 @@
 #include "Game.hpp"
-#include <filesystem>
-#include "UI/UIButton.hpp"
 
 #include "Layers/MainGameLayer.hpp"
 #include "Layers/MainMenuLayer.hpp"
+
+#include <filesystem>
 
 Game::Game(const std::string& gameName)
 {
