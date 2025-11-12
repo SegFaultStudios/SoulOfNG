@@ -9,12 +9,15 @@ Game::Game(const std::string& gameName)
 {
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::cout << "Loading all textures" << std::endl;
-
-    for(const auto& entry : std::filesystem::recursive_directory_iterator("./resources/textures/"))
-        AssetsManager::instance().loadTexture(entry.path().string());
-
-    std::cout << "Loaded successfully " << AssetsManager::instance().getTextures().size() << " textures\n"; 
+    if(std::filesystem::exists("./resources/textures/"))
+    {
+        std::cout << "Loading all textures" << std::endl;
+        for(const auto& entry : std::filesystem::recursive_directory_iterator("./resources/textures/"))
+            AssetsManager::instance().loadTexture(entry.path().string());
+        std::cout << "Loaded successfully " << AssetsManager::instance().getTextures().size() << " textures\n"; 
+    }
+    else
+        std::cerr << "ERROR: NO RESOURCES FOLDER" << std::endl;
 
     m_window.create(sf::VideoMode({800, 600}), gameName, sf::Style::Default);
 

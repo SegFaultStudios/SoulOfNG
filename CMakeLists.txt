@@ -53,6 +53,14 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
         USE_EDITOR=${SHOULD_USE_EDITOR}
 )
 
+if(EXISTS ${RESOURCE_DIR})
+    install(DIRECTORY ${RESOURCE_DIR}/
+        DESTINATION resources
+        USE_SOURCE_PERMISSIONS
+    )
+    message(STATUS "Resources will be installed to: resources/")
+endif()
+
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION .
     BUNDLE DESTINATION .
