@@ -33,7 +33,8 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
 
         // std::cout << "Position: X: " << this->getPosition().x << " Y: " << this->getPosition().y << std::endl;
 
-        bool isHovered = getBoundingBox().contains(sf::Vector2f{mousePosition.x, mousePosition.y});
+        bool isHovered = getBoundingBox().contains(sf::Vector2f{static_cast<float>(mousePosition.x), 
+        static_cast<float>(mousePosition.y)});
 
         if(isHovered && !m_isHovered)
         {

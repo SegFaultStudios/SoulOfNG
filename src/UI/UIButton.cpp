@@ -55,7 +55,11 @@ void UIButton::setTextCharacterSize(int size)
 
 void UIButton::setTexturedColor(const sf::Color& color)
 {
-    sf::Image image({getSize().x, getSize().y}, color);
+    sf::Image image(
+    {
+        static_cast<unsigned int>(getSize().x), 
+        static_cast<unsigned int>(getSize().y)
+    }, color);
 
     sf::Texture texture;
 

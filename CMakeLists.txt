@@ -52,3 +52,9 @@ endif()
 target_compile_definitions(${PROJECT_NAME} PRIVATE 
         USE_EDITOR=${SHOULD_USE_EDITOR}
 )
+
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION .
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION lib
+)

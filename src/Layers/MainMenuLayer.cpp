@@ -32,7 +32,7 @@ void MainMenuLayer::onStart()
 
     startButton->setText("Start");
     startButton->setSize({2.6, 2});
-    startButton->setPosition({m_window.getSize().x / 2, 200});
+    startButton->setPosition({static_cast<float>(m_window.getSize().x / 2), 200});
     startButton->setTextColor(sf::Color::White);
     startButton->setBorderColor(sf::Color::White);
     startButton->setTexturedColor(sf::Color{50, 50, 50});
@@ -40,7 +40,7 @@ void MainMenuLayer::onStart()
 
     // startButton->setTexture(*AssetsManager::instance().loadTexture("./resources/textures/b1_16x16.png"));
 
-    settingsButton->setPosition({m_window.getSize().x / 2, 300});
+    settingsButton->setPosition({static_cast<float>(m_window.getSize().x / 2), 300});
     settingsButton->setText("Settings");
     settingsButton->setSize({2.6, 2});
     settingsButton->setTextColor(sf::Color::White);
