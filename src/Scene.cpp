@@ -191,6 +191,42 @@ void Scene::handleInput(const sf::Event& event, const sf::RenderWindow& window)
         uiWidget->handleEvent(event, window);
 }
 
+void Scene::initQuadTree() {
+    if (m_entities.empty()) return;
+    sf::FloatRect worldBounds;
+    for (const auto& [id, entity] : m_entities) {
+        if (!dynamic_cast<Player*>(entity.get()))
+        {
+                auto bounds = entity->getGlobalBounds();
+                worldBounds = getTwoEntitiesBounds(worldBounds, bounds);
+        }
+    }
+    m_quadTree = std::make_unique<QuadTree>(worldBounds);
+
+
+}
+
+sf::FloatRect Scene::getTwoEntitiesBounds(sf::FloatRect area1, sf::FloatRect area2) const {
+    float newPosX, newPosY, newSizeX, newSizeY;
+
+    if (area1.position.x < area2.position.x) {
+         newPosX = area1.position.x;
+         newSizeX = (area2.position.x + area2.size.x) - area1.position.x;
+    } else {
+         newPosX = area2.position.x;
+         newSizeX = (area1.position.x + area1.size.x) - area2.position.x;
+    }
+    if (area1.position.y < area2.position.y) {
+         newPosY = area1.position.y;
+         newSizeY = (area2.position.y + area2.size.y) - area1.position.y;
+    } else {
+         newPosY = area2.position.y;
+         newSizeY = (area1.position.y + area1.size.y) - area2.position.y;
+    }
+
+    return sf::FloatRect({newPosX, newPosY}, {newSizeX, newSizeY} );
+}
+
 void Scene::update(float deltaTime)
 {
     Player* player = nullptr;
@@ -209,12 +245,19 @@ void Scene::update(float deltaTime)
 
     for(const auto& [id, uiWidget] : m_uiWidgets)
         uiWidget->update(deltaTime);
+    if (player) {
+        if (player->getPosition() != oldPlayerPos) {
+            auto playerArea = player->getGlobalBounds();
+            sf::Vector2f areaPos(playerArea.position.x - playerArea.size.x * 2, playerArea.position.y - playerArea.size.y * 2);
+            sf::Vector2f areaSize(playerArea.size.x * 4, playerArea.size.y * 4);
 
-    for (auto& [id, entity] : m_entities) {
-        if (dynamic_cast<Wall*>(entity.get())) {
-            if (player->getGlobalBounds().findIntersection(entity->getGlobalBounds())) {
-                player->setPosition(oldPlayerPos);
-                break;
+            auto entitiesAround = m_quadTree->findEntitiesAround({areaPos, areaSize});
+            for (auto& entity : entitiesAround) {
+                if (player->getGlobalBounds().findIntersection(entity->getGlobalBounds())) {
+                    player->setPosition(oldPlayerPos);
+                    break;
+                }
+
             }
         }
     }

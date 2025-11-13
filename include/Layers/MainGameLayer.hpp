@@ -5,6 +5,8 @@
 #include "Camera.hpp"
 #include "Scene.hpp"
 #include "Room.hpp"
+#include "BSP/BSPGenerator.hpp"
+#include "QuadTree.hpp"
 #include "AssetsManager.hpp"
 
 #if USE_EDITOR
@@ -21,11 +23,15 @@ public:
     void onStart() override;
     void onEnd() override;
 
+
 private:
     sf::VertexArray m_rayLine;
     sf::RenderWindow& m_window;
     Scene m_scene;
-    Room m_room{sf::Vector2f(0, 0), sf::Vector2f(500, 500)};
+    BSPGenerator m_BSPGenerator{sf::Vector2f(100, 100), 4,
+        sf::FloatRect(sf::Vector2f(0, 0),
+            sf::Vector2f(1000, 1000))};
+
 
 
 

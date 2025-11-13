@@ -1,6 +1,4 @@
-//
-// Created by Dmitrii on 03.11.2025.
-//
+
 #include "Room.hpp"
 #include <random>
 #include <iostream>
@@ -9,8 +7,8 @@
 Room::Room(const sf::Vector2f& position, const sf::Vector2f& size)
     : m_position(position), m_size(size)
 {
-    m_exitWidth = (m_size.x < m_size.y ? m_size.x : m_size.y) / 4.0f;
-    m_wallThickness = (m_size.x < m_size.y ? m_size.x : m_size.y) / 8.0f;
+    m_exitWidth = 60.0f; /*(m_size.x < m_size.y ? m_size.x : m_size.y) / 4.0f;*/
+    m_wallThickness = 30.0f; /*(m_size.x < m_size.y ? m_size.x : m_size.y) / 8.0f;*/
     generateExits();
     addAnchors();
     createWalls();
@@ -33,6 +31,11 @@ std::unique_ptr<Wall> Room::createWallFromAnchor(const Room::WallAnchor& anchor)
     wall->setOrigin(center);
     wall->setPosition(anchor.w_position);
     wall->setScale({anchor.w_size.x / 20, anchor.w_size.y / 20});
+    if (anchor.w_position.x == 0.0f && anchor.w_position.y == 0) {
+        std::cout << "pos of First wall at 0;0  " << anchor.w_position.x << anchor.w_position.y << std::endl;
+        std::cout << "getGlob   " << wall->getGlobalBounds().position.x << " " << wall->getGlobalBounds().position.y << std::endl;
+    }
+
     return wall;
 }
 

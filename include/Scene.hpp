@@ -8,6 +8,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "QuadTree.hpp"
+
 
 class Scene
 {
@@ -202,6 +204,9 @@ public:
     bool removeEntity(uint64_t id);
     bool removeEntity(Entity* entity);
 
+    void initQuadTree();
+    sf::FloatRect getTwoEntitiesBounds(sf::FloatRect area1, sf::FloatRect area2) const;
+
     void setCurrentRoom(std::unique_ptr<Room> room);
 
 
@@ -211,6 +216,7 @@ private:
     uint64_t m_nextUiWidgetId = 0;
     std::unordered_map<uint64_t, Entity::UniquePtr> m_entities;
     std::unordered_map<uint64_t, UIWidget::UniquePtr> m_uiWidgets;
+    std::unique_ptr<QuadTree> m_quadTree;
 
 
 
