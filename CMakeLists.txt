@@ -5,8 +5,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 set(SHOULD_USE_EDITOR ON CACHE BOOL "Use editor or no")
+
+if (MINGW)
+    message(STATUS "Enabling static linking for MinGW runtime")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
+endif()
 
 message("Use editor: " ${SHOULD_USE_EDITOR})
 
