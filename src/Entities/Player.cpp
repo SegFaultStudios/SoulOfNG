@@ -3,7 +3,9 @@
 
 Player::Player(const std::string& name) : Entity(name)
 {
+
     m_speed = WALKING_SPEED;
+
 }
 
 void Player::handleInput(const sf::Event& event)
@@ -30,10 +32,12 @@ void Player::handleInput(const sf::Event& event)
     }
 }
 
+
 void Player::setInventory(Inventory* inventory)
 {
     m_inventory = inventory;
     m_inventory->hide();
+
 }
 
 void Player::update(float deltaTime)

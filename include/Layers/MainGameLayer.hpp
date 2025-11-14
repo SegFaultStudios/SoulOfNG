@@ -4,6 +4,9 @@
 #include "Layers/Layer.hpp"
 #include "Camera.hpp"
 #include "Scene.hpp"
+#include "Room.hpp"
+#include "BSP/BSPGenerator.hpp"
+#include "QuadTree.hpp"
 #include "AssetsManager.hpp"
 #include "Widgets/EscapeUI.hpp"
 
@@ -26,6 +29,13 @@ private:
     sf::VertexArray m_rayLine;
     sf::RenderWindow& m_window;
     Scene m_scene;
+    BSPGenerator m_BSPGenerator{sf::Vector2f(100, 100), 4,
+        sf::FloatRect(sf::Vector2f(0, 0),
+            sf::Vector2f(1000, 1000))};
+
+
+
+
     std::unique_ptr<Camera> m_camera{nullptr};
 #if USE_EDITOR
     std::unique_ptr<Editor> m_editor{nullptr};

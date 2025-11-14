@@ -65,6 +65,9 @@ void MainGameLayer::handleEvent(sf::Event& event)
     }
 }
 
+
+
+
 void MainGameLayer::onStart()
 {
     m_scene.initUiView(m_window);
@@ -112,6 +115,15 @@ void MainGameLayer::onStart()
     m_rayLine.resize(2);
     m_rayLine[0].color = sf::Color::Red;
     m_rayLine[1].color = sf::Color::Green;
+    m_scene.initQuadTree();
+    auto territories = m_BSPGenerator.getTerritories();
+    for (auto ter : territories) {
+        Room room(ter.position, ter.size);
+        auto& roomWalls =room.getWalls();
+        for (auto& wall : roomWalls) {
+            m_scene.addEntity(std::move(wall));
+        }
+    }
 }
 
 void MainGameLayer::onEnd()

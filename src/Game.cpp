@@ -40,8 +40,10 @@ Game::Game(const std::string& gameName)
 
 void Game::run()
 {
+
     sf::Clock clock;
     float deltaTime = 0.0f;
+
 
     while (m_window.isOpen())
     {

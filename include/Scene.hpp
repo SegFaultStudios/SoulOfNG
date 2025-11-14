@@ -2,10 +2,13 @@
 #define SCENE_HPP
 
 #include "Entities/Entity.hpp"
+#include "Room.hpp"
 #include "UI/UIWidget.hpp"
 
 #include <memory>
 #include <unordered_map>
+
+#include "QuadTree.hpp"
 
 class Scene
 {
@@ -203,6 +206,11 @@ public:
     {
         m_uiView = window.getDefaultView();
     }
+    void initQuadTree();
+    sf::FloatRect getTwoEntitiesBounds(sf::FloatRect area1, sf::FloatRect area2) const;
+
+    void setCurrentRoom(std::unique_ptr<Room> room);
+
 
 private:
     //*Id = entity
@@ -212,6 +220,10 @@ private:
     std::unordered_map<uint64_t, UIWidget::UniquePtr> m_uiWidgets;
 
     sf::View m_uiView;
+    std::unique_ptr<QuadTree> m_quadTree;
+
+
+
 };
 
 
