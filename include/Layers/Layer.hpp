@@ -2,6 +2,7 @@
 #define LAYER_HPP
 
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 class Layer
 {
@@ -11,6 +12,7 @@ public:
     virtual void handleEvent(sf::Event& event) = 0;
     virtual void onStart() = 0;
     virtual void onEnd() = 0;
+    virtual std::unique_ptr<Layer> getNextLayer() const {return nullptr;}
 
     bool isOver() const
     {

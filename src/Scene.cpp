@@ -5,8 +5,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "Player.hpp"
-#include "Wall.hpp"
+#include "Entities/Player.hpp"
+#include "Entities/Wall.hpp"
 
 Entity* Scene::getEntity(uint64_t id) const
 {
@@ -181,13 +181,26 @@ bool Scene::doesUIWidgetNameExists(const std::string& name) const
     return false;
 }
 
-void Scene::handleInput(const sf::Event& event, const sf::RenderWindow& window)
+void Scene::handleInput(const sf::Event& event, sf::RenderWindow& window)
 {
+    if (auto* resized = event.getIf<sf::Event::Resized>()) 
+    {
+        sf::Vector2f newSize(resized->size.x, resized->size.y);
+        m_uiView.setSize(newSize);
+    }
+
     for(const auto& [id, entity] : m_entities)
         entity->handleInput(event);
 
+    
+    auto currentView = window.getView();
+
+    window.setView(m_uiView);
+
     for(const auto& [id, uiWidget] : m_uiWidgets)
         uiWidget->handleEvent(event, window);
+
+    window.setView(currentView);
 }
 
 void Scene::update(float deltaTime)
@@ -235,8 +248,9 @@ void Scene::draw(sf::RenderWindow& target)
         entity->draw(target);
 
     //UI elements should always be on the screen, so use default view here
+
     auto currentView = target.getView();
-    target.setView(target.getDefaultView());
+    target.setView(m_uiView);
 
     for(const auto& [id, uiWidget] : m_uiWidgets)
         target.draw(*uiWidget);

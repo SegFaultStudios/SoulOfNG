@@ -2,8 +2,10 @@
 
 #include "UI/UIButton.hpp"
 #include <iostream>
-#include "Inventory.hpp"
-#include "Player.hpp"
+#include "Widgets/Inventory.hpp"
+#include "Entities/Player.hpp"
+
+#include "Layers/MainMenuLayer.hpp"
 
 MainGameLayer::MainGameLayer(sf::RenderWindow& window) : m_window(window)
 {
@@ -41,6 +43,12 @@ void MainGameLayer::draw(sf::RenderWindow& window)
 
 void MainGameLayer::handleEvent(sf::Event& event)
 {
+    if(auto key = event.getIf<sf::Event::KeyPressed>())
+    {
+        if(key->code == sf::Keyboard::Key::Escape)
+            m_escapeUI->setVisible(!m_escapeUI->isVisible());
+    }
+
 #if USE_EDITOR
     m_editor->processEvents(event);
 #endif
@@ -59,6 +67,8 @@ void MainGameLayer::handleEvent(sf::Event& event)
 
 void MainGameLayer::onStart()
 {
+    m_scene.initUiView(m_window);
+
     m_camera = std::make_unique<Camera>(m_window);
 
     m_scene.loadFromFile("./resources/maps/default_map.json");
@@ -66,6 +76,16 @@ void MainGameLayer::onStart()
     auto inventoryId = m_scene.addUI<Inventory>("Inventory");
 
     auto inventory = m_scene.getUiWidget<Inventory>(inventoryId);
+
+    auto escapeUIId = m_scene.addUI<EscapeUI>("EscapeUI");
+    m_escapeUI = m_scene.getUiWidget<EscapeUI>(escapeUIId);
+
+    m_escapeUI->setVisible(false);
+
+    m_escapeUI->getMainMenuButton()->setOnClick([this]
+    {
+        this->over();
+    });
 
     auto playerId = m_scene.findEntityWithName("Player");
 
@@ -99,3 +119,7 @@ void MainGameLayer::onEnd()
 
 }
 
+std::unique_ptr<Layer> MainGameLayer::getNextLayer() const
+{
+    return std::make_unique<MainMenuLayer>(m_window);
+}

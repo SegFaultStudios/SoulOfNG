@@ -10,7 +10,8 @@ enum class CustomEvent
 {
     HOVERED,
     LEAVE,
-    CLICKED
+    CLICKED,
+    LEAVE_CLICK,
 };
 
 class UIWidget : public sf::Drawable
@@ -46,11 +47,11 @@ public:
     virtual void update(float deltaTime);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
-    virtual sf::FloatRect getBoundingBox() const = 0;
-
+    virtual sf::FloatRect getBoundingBox() const { return sf::FloatRect({-1111.0f, -1111.0f}, {-1292.0f, 242.0f}); }
 private:
     bool m_isVisible{true};
     bool m_isHovered{false};
+    bool m_wasHoveredBeforeClick{false};
 
     sf::Vector2f m_position{0.0f, 0.0f};
     sf::Vector2f m_size{2.0f, 2.0f};

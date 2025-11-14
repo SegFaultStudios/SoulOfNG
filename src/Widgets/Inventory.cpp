@@ -1,7 +1,6 @@
-#include "Inventory.hpp"
+#include "Widgets/Inventory.hpp"
 
 #include "AssetsManager.hpp"
-
 #include <iostream>
 #include <cmath>
 

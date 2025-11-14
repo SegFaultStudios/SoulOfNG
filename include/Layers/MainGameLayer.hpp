@@ -5,6 +5,7 @@
 #include "Camera.hpp"
 #include "Scene.hpp"
 #include "AssetsManager.hpp"
+#include "Widgets/EscapeUI.hpp"
 
 #if USE_EDITOR
     #include "Editor.hpp"
@@ -19,8 +20,9 @@ public:
     void handleEvent(sf::Event& event) override;
     void onStart() override;
     void onEnd() override;
-
+    std::unique_ptr<Layer> getNextLayer() const override;
 private:
+    EscapeUI* m_escapeUI{nullptr};
     sf::VertexArray m_rayLine;
     sf::RenderWindow& m_window;
     Scene m_scene;

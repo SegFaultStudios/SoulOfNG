@@ -68,6 +68,7 @@
 - [ ] Local co-op mode
 ## Ideas & Future
 - [ ] We have hardcoded rooms and generated rooms
+- [ ] LobbyServer handles all RoomServers. When player connects he can create a lobby room and wait for other players(Private or public)
 
 ## Completed
 - [x] Set up CMake build system 28.10.25

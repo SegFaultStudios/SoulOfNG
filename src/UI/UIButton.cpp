@@ -1,6 +1,5 @@
 #include "UI/UIButton.hpp"
 #include <iostream>
-
 #include "AssetsManager.hpp"
 
 UIButton::UIButton(const std::string& name, const sf::Vector2f& size) : UIWidget(name)

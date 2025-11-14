@@ -1,4 +1,4 @@
-#include "Player.hpp"
+#include "Entities/Player.hpp"
 #include "SFML/Window/Keyboard.hpp"
 
 Player::Player(const std::string& name) : Entity(name)

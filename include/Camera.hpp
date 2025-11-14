@@ -2,7 +2,7 @@
 #define CAMERA_HPP
 
 #include <SFML/Graphics.hpp>
-#include "Entity.hpp"
+#include "Entities/Entity.hpp"
 
 class Camera
 {
