@@ -1,11 +1,14 @@
 #ifndef SCENE_HPP
 #define SCENE_HPP
 
-#include "Entity.hpp"
+#include "Entities/Entity.hpp"
+#include "Room.hpp"
 #include "UI/UIWidget.hpp"
 
 #include <memory>
 #include <unordered_map>
+
+#include "QuadTree.hpp"
 
 class Scene
 {
@@ -188,7 +191,7 @@ public:
     
     uint64_t findEntityWithName(const std::string& name) const;
 
-    void handleInput(const sf::Event& event, const sf::RenderWindow& window);
+    void handleInput(const sf::Event& event, sf::RenderWindow& window);
     void update(float deltaTime);
     void draw(sf::RenderWindow& target);
 
@@ -198,12 +201,29 @@ public:
     bool removeEntity(uint64_t id);
     bool removeEntity(Entity* entity);
 
+    //!VERY IMPORTANT FOR NOW(UI WILL BE FUCKED WITHOUT CALLING THIS METHOD)
+    void initUiView(sf::RenderWindow& window)
+    {
+        m_uiView = window.getDefaultView();
+    }
+    void initQuadTree();
+    sf::FloatRect getTwoEntitiesBounds(sf::FloatRect area1, sf::FloatRect area2) const;
+
+    void setCurrentRoom(std::unique_ptr<Room> room);
+
+
 private:
     //*Id = entity
     uint64_t m_nextEntityId = 0;
     uint64_t m_nextUiWidgetId = 0;
     std::unordered_map<uint64_t, Entity::UniquePtr> m_entities;
     std::unordered_map<uint64_t, UIWidget::UniquePtr> m_uiWidgets;
+
+    sf::View m_uiView;
+    std::unique_ptr<QuadTree> m_quadTree;
+
+
+
 };
 
 

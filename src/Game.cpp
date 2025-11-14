@@ -1,6 +1,4 @@
 #include "Game.hpp"
-
-#include "Layers/MainGameLayer.hpp"
 #include "Layers/MainMenuLayer.hpp"
 
 #include <filesystem>
@@ -19,7 +17,7 @@ Game::Game(const std::string& gameName)
     else
         std::cerr << "ERROR: NO RESOURCES FOLDER" << std::endl;
 
-    m_window.create(sf::VideoMode({800, 600}), gameName, sf::Style::Default);
+    m_window.create(sf::VideoMode({800, 600}), gameName, sf::Style::Titlebar | sf::Style::Close);
 
     sf::Image image({20, 20}, sf::Color::White);
     sf::Texture whiteTexture;
@@ -36,51 +34,52 @@ Game::Game(const std::string& gameName)
     std::cout << "Game loading took: " << duration.count() / 1000.0 << " milliseconds\n";
     std::cout << "Game loading took: " << duration.count() / 1000000.0 << " seconds\n";
 
-    m_layers.emplace_back(std::make_unique<MainMenuLayer>(m_window));
-    m_layers.emplace_back(std::make_unique<MainGameLayer>(m_window));
-
-    //Maybe this is not a good decision
-    m_currentLayer = m_layers.begin();
-
-    m_currentLayer->get()->onStart();
+    m_layer = std::make_unique<MainMenuLayer>(m_window);
+    m_layer->onStart();
 }
 
 void Game::run()
 {
+
     sf::Clock clock;
     float deltaTime = 0.0f;
 
+
     while (m_window.isOpen())
     {
-        if(m_currentLayer->get()->isOver())
+        if(m_layer->isOver())
         {
-            if(m_currentLayer == m_layers.end() - 1)
+            auto nextLayer = m_layer->getNextLayer();
+
+            if(nextLayer)
+            {
+                m_layer->onEnd();
+                m_layer.reset();
+
+                m_layer = std::move(nextLayer);
+                m_layer->onStart();
+            }
+            else
             {
                 std::cerr << "No more layers. Terminating game..." << std::endl;
                 return;
             }
-
-            m_currentLayer->get()->onEnd();
-
-            ++m_currentLayer;
-
-            m_currentLayer->get()->onStart();
         }
 
         deltaTime = clock.restart().asSeconds();
 
         while (auto event = m_window.pollEvent())
         {
-            m_currentLayer->get()->handleEvent(event.value());
+            m_layer->handleEvent(event.value());
 
             if (event->is<sf::Event::Closed>())
                 m_window.close();
         }
 
-        m_currentLayer->get()->update(deltaTime);
+        m_layer->update(deltaTime);
 
         m_window.clear();
-        m_currentLayer->get()->draw(m_window);
+        m_layer->draw(m_window);
         m_window.display();
     }
 }

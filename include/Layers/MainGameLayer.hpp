@@ -4,7 +4,11 @@
 #include "Layers/Layer.hpp"
 #include "Camera.hpp"
 #include "Scene.hpp"
+#include "Room.hpp"
+#include "BSP/BSPGenerator.hpp"
+#include "QuadTree.hpp"
 #include "AssetsManager.hpp"
+#include "Widgets/EscapeUI.hpp"
 
 #if USE_EDITOR
     #include "Editor.hpp"
@@ -19,11 +23,19 @@ public:
     void handleEvent(sf::Event& event) override;
     void onStart() override;
     void onEnd() override;
-
+    std::unique_ptr<Layer> getNextLayer() const override;
 private:
+    EscapeUI* m_escapeUI{nullptr};
     sf::VertexArray m_rayLine;
     sf::RenderWindow& m_window;
     Scene m_scene;
+    BSPGenerator m_BSPGenerator{sf::Vector2f(100, 100), 4,
+        sf::FloatRect(sf::Vector2f(0, 0),
+            sf::Vector2f(1000, 1000))};
+
+
+
+
     std::unique_ptr<Camera> m_camera{nullptr};
 #if USE_EDITOR
     std::unique_ptr<Editor> m_editor{nullptr};

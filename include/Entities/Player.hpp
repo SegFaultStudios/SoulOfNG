@@ -1,9 +1,9 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include "Entity.hpp"
+#include "Entities/Entity.hpp"
 #include "Scene.hpp"
-#include "Inventory.hpp"
+#include "Widgets/Inventory.hpp"
 
 class Player : public Entity
 {

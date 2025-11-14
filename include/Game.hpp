@@ -6,7 +6,7 @@
 #include <iostream>
 #include <memory>
 
-#include "Player.hpp"
+#include "Entities/Player.hpp"
 #include "Camera.hpp"
 #include "Scene.hpp"
 #include "AssetsManager.hpp"
@@ -25,8 +25,7 @@ public:
     void run();
 private:
     sf::RenderWindow m_window;
-    std::vector<std::unique_ptr<Layer>> m_layers;
-    std::vector<std::unique_ptr<Layer>>::iterator m_currentLayer;
+    std::unique_ptr<Layer> m_layer{nullptr};
 };
 
 #endif //GAME_HPP

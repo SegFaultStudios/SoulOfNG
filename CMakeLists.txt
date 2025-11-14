@@ -5,16 +5,29 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(SHOULD_USE_EDITOR ON CACHE BOOL "Use editor or no")
 
 if (MINGW)
-    message(STATUS "Enabling static linking for MinGW runtime")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
 endif()
 
+set(SHOULD_USE_EDITOR ON CACHE BOOL "Use editor or no")
+set(NET_BUILD_SERVER ON CACHE BOOL "Build server or no")
+
 message("Use editor: " ${SHOULD_USE_EDITOR})
 
+set(SFML_INSTALL_PKGCONFIG_FILES FALSE CACHE BOOL "" FORCE)
+set(SFML_BUILD_EXAMPLES FALSE CACHE BOOL "" FORCE)
+set(SFML_BUILD_DOC FALSE CACHE BOOL "" FORCE)
+set(SFML_BUILD_TEST_SUITE FALSE CACHE BOOL "" FORCE)
+set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "" FORCE)
+
 add_subdirectory(external)
+add_subdirectory(network/Packet)
+
+if(NET_BUILD_SERVER)
+    message("BUILDING SERVER")
+    add_subdirectory(network/Server)
+endif()
 
 file(GLOB_RECURSE PROJECT_HEADERS  ${INCLUDE_DIR}/*.h ${INCLUDE_DIR}/*.hpp)
 file(GLOB_RECURSE PROJECT_SOURCES ${SRC_DIR}/*.cpp)
@@ -30,11 +43,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         sfml-audio
         sfml-network
         nlohmann_json
+        NetPackets
 )
-
-if(SHOULD_USE_EDITOR)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ImGui-SFML::ImGui-SFML)
-endif()
 
 #To copy resources folder inside build directory
 set(RESOURCE_DIR "${CMAKE_SOURCE_DIR}/resources")
@@ -52,10 +62,14 @@ if(EXISTS ${RESOURCE_DIR})
 else()
     message(WARNING "Resource directory not found: ${RESOURCE_DIR}")
 endif()
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE 
-        USE_EDITOR=${SHOULD_USE_EDITOR}
-)
+ 
+#USE_EDITOR=${SHOULD_USE_EDITOR} doesn't work for some reason
+if(SHOULD_USE_EDITOR)
+    target_link_libraries(${PROJECT_NAME} PUBLIC ImGui-SFML::ImGui-SFML)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_EDITOR=1)
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_EDITOR=0)
+endif()
 
 if(EXISTS ${RESOURCE_DIR})
     install(DIRECTORY ${RESOURCE_DIR}/
@@ -67,6 +81,6 @@ endif()
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION .
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION lib
+    # BUNDLE DESTINATION .
+    # LIBRARY DESTINATION lib
 )

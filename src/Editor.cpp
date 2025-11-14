@@ -6,7 +6,7 @@
 #include <imgui-SFML.h>
 #include <cstring>
 
-#include "Wall.hpp"
+#include "Entities/Wall.hpp"
 
 #include <iostream>
 #include <stdexcept>

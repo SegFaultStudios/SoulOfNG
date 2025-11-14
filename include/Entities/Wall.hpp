@@ -1,7 +1,7 @@
 #ifndef WALL_HPP
 #define WALL_HPP
 
-#include "Entity.hpp"
+#include "Entities/Entity.hpp"
 
 #include <memory>
 

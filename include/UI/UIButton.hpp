@@ -10,6 +10,8 @@
 class UIButton : public UIWidget
 {
 public:
+    using UniquePtr = std::unique_ptr<UIButton>;
+    
     UIButton(const std::string& name, const sf::Vector2f& size);
     UIButton(const std::string& name);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

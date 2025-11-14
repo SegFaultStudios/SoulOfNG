@@ -1,13 +1,14 @@
-#ifndef MAIN_MENU_LAYER_HPP
-#define MAIN_MENU_LAYER_HPP
+#ifndef SETTINGS_GAME_LAYER_HPP
+#define SETTINGS_GAME_LAYER_HPP
 
 #include "Layers/Layer.hpp"
 #include "Scene.hpp"
 
-class MainMenuLayer : public Layer
+class SettingsGameLayer : public Layer
 {
 public:
-    MainMenuLayer(sf::RenderWindow& window);
+    SettingsGameLayer(sf::RenderWindow& window);
+
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     void handleEvent(sf::Event& event) override;
@@ -15,18 +16,8 @@ public:
     void onEnd() override;
     std::unique_ptr<Layer> getNextLayer() const override;
 private:
-    enum class MainMenuNextLayer
-    {
-        SETTINGS,
-        MULTIPLAYER,
-        SINGLEPLAYER,
-        EXIT
-    };
-
-    MainMenuNextLayer m_nextLayerId;
-
     Scene m_scene;
     sf::RenderWindow& m_window;
 };
 
-#endif //MAIN_MENU_LAYER_HPP
+#endif //SETTINGS_GAME_LAYER_HPP

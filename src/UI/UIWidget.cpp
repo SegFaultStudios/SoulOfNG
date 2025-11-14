@@ -23,18 +23,9 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
 
     if(auto mouseEvent = event.getIf<sf::Event::MouseMoved>())
     {
-        sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-
-        // std::cout << "Mouse position: X: " << mousePosition.x << " Y: " << mousePosition.y << std::endl;
-
-        // auto mouse = window.mapCoordsToPixel({mousePosition.x, mousePosition.y});
-
-        // std::cout << "Converted mouse position X: " << mouse.x << " Y: " << mousePosition.y << std::endl;
-
-        // std::cout << "Position: X: " << this->getPosition().x << " Y: " << this->getPosition().y << std::endl;
-
-        bool isHovered = getBoundingBox().contains(sf::Vector2f{static_cast<float>(mousePosition.x), 
-        static_cast<float>(mousePosition.y)});
+        sf::Vector2f mouseWorldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
+        
+        bool isHovered = getBoundingBox().contains(mouseWorldPos);
 
         if(isHovered && !m_isHovered)
         {
@@ -46,6 +37,8 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
         else if(!isHovered && m_isHovered)
         {
             handleCustomEvent(CustomEvent::LEAVE);
+
+            m_wasHoveredBeforeClick = true;
 
             if(m_onLeave)
                 m_onLeave();
@@ -61,6 +54,12 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
 
             if(m_onClick)
                 m_onClick();
+        }
+        else if (mouseClick->button == sf::Mouse::Button::Left && !m_isHovered && m_wasHoveredBeforeClick)
+        {
+            handleCustomEvent(CustomEvent::LEAVE_CLICK);
+
+            m_wasHoveredBeforeClick = false;
         }
     }
 }

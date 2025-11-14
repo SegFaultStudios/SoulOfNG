@@ -1,8 +1,9 @@
-#include "Wall.hpp"
+#include "Entities/Wall.hpp"
 #include <iostream>
 
 Wall::Wall(const std::string& name) : Entity(name)
 {
+
 }
 
 void Wall::update(float deltaTime)
