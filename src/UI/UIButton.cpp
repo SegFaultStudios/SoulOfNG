@@ -2,24 +2,7 @@
 #include <iostream>
 #include "AssetsManager.hpp"
 
-UIButton::UIButton(const std::string& name, const sf::Vector2f& size) : UIWidget(name)
-{
-    m_sprite = std::make_unique<sf::Sprite>(*AssetsManager::instance().getTexture("default"));
-
-    if(!m_font.openFromFile("./resources/fonts/JetBrainsMono-Bold.ttf"))
-    {
-        std::cerr << "Failed to init font" << std::endl;
-    }
-
-    setSize(size);
-    setPosition({400, 400});
-
-    setOnHover([]{std::cout << "On hover\n";});
-    setOnClick([]{std::cout << "On click\n";});
-    setOnLeave([]{std::cout << "On leave\n";});
-}
-
-UIButton::UIButton(const std::string& name) : UIWidget(name)
+UIButton::UIButton(const std::string& name, UIWidget* parent) : UIWidget(name, parent)
 {
     m_sprite = std::make_unique<sf::Sprite>(*AssetsManager::instance().getTexture("default"));
 
@@ -31,12 +14,12 @@ UIButton::UIButton(const std::string& name) : UIWidget(name)
 
     m_text = std::make_unique<sf::Text>(m_font);
     m_text->setCharacterSize(16);
-    m_text->setFillColor(sf::Color::Black);
+    m_text->setFillColor(sf::Color::White);
     m_text->setStyle(sf::Text::Bold);
 
     m_border.setFillColor(sf::Color::Transparent);
     m_border.setOutlineThickness(2);
-    m_border.setOutlineColor(sf::Color{50, 50, 50});
+    m_border.setOutlineColor(sf::Color::White);
 
     setPosition({400, 400});
     setSize({0.4, 0.4});
@@ -160,6 +143,9 @@ void UIButton::handleCustomEvent(CustomEvent event)
 
 void UIButton::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    if(!isVisible())
+        return;
+        
     target.draw(*m_sprite.get(), states);
     target.draw(*m_text.get(), states);
     target.draw(m_border, states);

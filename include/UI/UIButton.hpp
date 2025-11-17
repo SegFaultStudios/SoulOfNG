@@ -12,8 +12,7 @@ class UIButton : public UIWidget
 public:
     using UniquePtr = std::unique_ptr<UIButton>;
     
-    UIButton(const std::string& name, const sf::Vector2f& size);
-    UIButton(const std::string& name);
+    explicit UIButton(const std::string& name, UIWidget* parent = nullptr);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     sf::FloatRect getBoundingBox() const override;
     void handleCustomEvent(CustomEvent event) override;
@@ -32,7 +31,6 @@ public:
 
 private:
     void updateTextPosition();
-
 
     sf::RectangleShape m_border;
     std::unique_ptr<sf::Sprite> m_sprite{nullptr};

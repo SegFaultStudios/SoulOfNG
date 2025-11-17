@@ -65,9 +65,6 @@ void MainGameLayer::handleEvent(sf::Event& event)
     }
 }
 
-
-
-
 void MainGameLayer::onStart()
 {
     m_scene.initUiView(m_window);

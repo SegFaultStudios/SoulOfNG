@@ -1,0 +1,6 @@
+{
+    "server_udp_ip": "127.0.0.1",
+    "server_udp_port": 8080,
+    "server_tcp_ip": "127.0.0.1",
+    "server_tcp_port": 9090
+}

@@ -1,9 +1,10 @@
 #include "UI/UIWidget.hpp"
 #include <iostream>
 
-UIWidget::UIWidget(const std::string& name) : m_name(name)
+UIWidget::UIWidget(const std::string& name, UIWidget* parent) : m_name(name), m_parent(parent)
 {
-
+    if(parent)
+        parent->m_children.push_back(this);
 }
 
 void UIWidget::setName(const std::string& name)
@@ -14,6 +15,11 @@ void UIWidget::setName(const std::string& name)
 const std::string& UIWidget::getName() const
 {
     return m_name;
+}
+
+sf::FloatRect UIWidget::getBoundingBox() const 
+{ 
+    return sf::FloatRect(m_position, m_size); 
 }
 
 void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
@@ -51,6 +57,8 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
         if(mouseClick->button == sf::Mouse::Button::Left && m_isHovered)
         {   
             handleCustomEvent(CustomEvent::CLICKED);
+            
+            clicked.emit();
 
             if(m_onClick)
                 m_onClick();
@@ -71,6 +79,8 @@ bool UIWidget::isVisible() const
 
 void UIWidget::update(float deltaTime)
 {
+    if(!isVisible())
+        return;
 
 }
 

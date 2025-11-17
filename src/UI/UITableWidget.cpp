@@ -128,6 +128,9 @@ void UITableWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& 
 
 void UITableWidget::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    if(!isVisible())
+        return;
+    
     target.draw(m_background, states);
 
     float x = getPosition().x;

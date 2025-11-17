@@ -69,6 +69,13 @@
 ## Ideas & Future
 - [ ] We have hardcoded rooms and generated rooms
 - [ ] LobbyServer handles all RoomServers. When player connects he can create a lobby room and wait for other players(Private or public)
+sudo ufw allow 9090/tcp
+sudo ufw allow 8080/udp
+sudo ufw enable
+
+- [ ] Hide/Show Layers instead of deleting them
+- [ ] Are you sure to close this/that dialog window
+
 
 ## Completed
 - [x] Set up CMake build system 28.10.25

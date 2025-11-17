@@ -3,6 +3,16 @@
 
 #include <SFML/Network.hpp>
 
+#include "Types.hpp"
+
+#include <vector>
+#include <string>
+
+struct Lobby
+{
+    int playersAmount{0};
+    std::string lobbyName;
+};
 
 //TODO add IMGUI SERVER(BUILD_SERVER_GUI FLAG IN CMAKE)
 class Server
@@ -18,9 +28,15 @@ public:
 private:
     void run();
 
+    void handleClients();
+
     sf::UdpSocket m_udpSocket;
     sf::TcpListener m_tcpListener;
     bool m_isServerRunning{false};
+
+    std::vector<std::unique_ptr<sf::TcpSocket>> m_clients;
+
+    std::vector<Lobby> m_lobbies;
 };
 
 #endif //NET_SERVER_HPP
