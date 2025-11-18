@@ -82,7 +82,7 @@ void MainGameLayer::onStart()
 
     m_escapeUI->setVisible(false);
 
-    m_escapeUI->getMainMenuButton()->setOnClick([this]
+    HANDLE_EVENT(m_escapeUI->getMainMenuButton(), UIButton::clicked, this, [this]
     {
         this->over();
     });

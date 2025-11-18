@@ -37,8 +37,7 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
         {
             handleCustomEvent(CustomEvent::HOVERED);
 
-            if(m_onHover)
-                m_onHover();
+            hovered.emit();
         }
         else if(!isHovered && m_isHovered)
         {
@@ -46,8 +45,7 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
 
             m_wasHoveredBeforeClick = true;
 
-            if(m_onLeave)
-                m_onLeave();
+            left.emit();
         }
 
         m_isHovered = isHovered;
@@ -59,9 +57,6 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
             handleCustomEvent(CustomEvent::CLICKED);
             
             clicked.emit();
-
-            if(m_onClick)
-                m_onClick();
         }
         else if (mouseClick->button == sf::Mouse::Button::Left && !m_isHovered && m_wasHoveredBeforeClick)
         {
@@ -81,7 +76,6 @@ void UIWidget::update(float deltaTime)
 {
     if(!isVisible())
         return;
-
 }
 
 const sf::Vector2f& UIWidget::getPosition() const
@@ -117,21 +111,6 @@ void UIWidget::show()
 void UIWidget::setVisible(bool isVisible)
 {
     m_isVisible = isVisible;
-}
-
-void UIWidget::setOnClick(const EventCallback& callback)
-{
-    m_onClick = callback;
-}
-
-void UIWidget::setOnHover(const EventCallback& callback)
-{
-    m_onHover = callback;
-}
-
-void UIWidget::setOnLeave(const EventCallback& callback)
-{
-    m_onLeave = callback;
 }
 
 UIWidget::~UIWidget() = default;

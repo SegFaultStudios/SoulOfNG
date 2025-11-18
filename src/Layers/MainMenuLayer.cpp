@@ -50,7 +50,7 @@ void MainMenuLayer::onStart()
     startButton->setTextColor(sf::Color::White);
     startButton->setBorderColor(sf::Color::White);
     startButton->setTexturedColor(sf::Color{50, 50, 50});
-    startButton->setOnClick([this]
+    HANDLE_EVENT(startButton, UIButton::clicked, this, [this]
     {
         m_nextLayerId = MainMenuNextLayer::SINGLEPLAYER;
         this->over();
@@ -62,13 +62,11 @@ void MainMenuLayer::onStart()
     multiplayerButton->setTextColor(sf::Color::White);
     multiplayerButton->setBorderColor(sf::Color::White);
     multiplayerButton->setTexturedColor(sf::Color{50, 50, 50});
-    multiplayerButton->setOnClick([this]
+    HANDLE_EVENT(multiplayerButton, UIButton::clicked, this, [this]
     {
         m_nextLayerId = MainMenuNextLayer::MULTIPLAYER;
         this->over();
     });
-
-    // startButton->setTexture(*AssetsManager::instance().loadTexture("./resources/textures/b1_16x16.png"));
 
     settingsButton->setPosition({startX, startY + 200});
     settingsButton->setText("Settings");
@@ -76,12 +74,11 @@ void MainMenuLayer::onStart()
     settingsButton->setTextColor(sf::Color::White);
     settingsButton->setBorderColor(sf::Color::White);
     settingsButton->setTexturedColor(sf::Color{50, 50, 50});
-    settingsButton->setOnClick([this]
+    HANDLE_EVENT(settingsButton, UIButton::clicked, this, [this]
     {
         m_nextLayerId = MainMenuNextLayer::SETTINGS;
         this->over();
     });
-
 
     exitButton->setPosition({startX, startY + 300});
     exitButton->setText("Exit");
@@ -89,12 +86,11 @@ void MainMenuLayer::onStart()
     exitButton->setTextColor(sf::Color::White);
     exitButton->setBorderColor(sf::Color::White);
     exitButton->setTexturedColor(sf::Color{50, 50, 50});
-    exitButton->setOnClick([this]
+    HANDLE_EVENT(exitButton, UIButton::clicked, this, [this]
     {
         m_nextLayerId = MainMenuNextLayer::EXIT;
         this->over();
     });
-
 }
 
 void MainMenuLayer::onEnd()

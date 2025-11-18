@@ -10,7 +10,8 @@
 
 struct Lobby
 {
-    int playersAmount{0};
+    uint16_t numberOfPlayers{0};
+    uint16_t maxNumberOfPlayers{4};
     std::string lobbyName;
 };
 

@@ -1,17 +1,14 @@
-#ifndef SETTINGS_GAME_LAYER_HPP
-#define SETTINGS_GAME_LAYER_HPP
+#ifndef LOBBY_LAYER_HPP
+#define LOBBY_LAYER_HPP
 
 #include "Layers/Layer.hpp"
 #include "Scene.hpp"
+#include "Network/Client.hpp"
 
-#include "UI/UICheckBox.hpp"
-#include "UI/UIButton.hpp"
-
-class SettingsGameLayer : public Layer
+class LobbyLayer : public Layer
 {
 public:
-    SettingsGameLayer(sf::RenderWindow& window);
-
+    LobbyLayer(sf::RenderWindow& window, Client::UniquePtr client);
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     void handleEvent(sf::Event& event) override;
@@ -19,10 +16,9 @@ public:
     void onEnd() override;
     std::unique_ptr<Layer> getNextLayer() const override;
 private:
+    Client::UniquePtr m_client{nullptr};
     Scene m_scene;
     sf::RenderWindow& m_window;
-    UICheckBox* m_fullscreenCheckBox{nullptr};
-    UIButton* m_backButton{nullptr};
 };
 
-#endif //SETTINGS_GAME_LAYER_HPP
+#endif //LOBBY_LAYER_HPP

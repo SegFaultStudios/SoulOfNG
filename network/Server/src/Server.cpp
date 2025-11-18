@@ -8,8 +8,9 @@ volatile sig_atomic_t g_ctrl_c_pressed = 0;
 Server::Server()
 {
     m_lobbies.push_back(Lobby{
-        .playersAmount = 1,
-        .lobbyName = "Something",
+        .numberOfPlayers = 1,
+        .maxNumberOfPlayers = 10,
+        .lobbyName = "Test",
     });
 }
 
@@ -29,7 +30,6 @@ void Server::start()
     m_udpSocket.setBlocking(false);
 
     std::cout << "Successfully started server" << std::endl;
-
 
     m_isServerRunning = true;
 
@@ -66,17 +66,17 @@ void Server::run()
 
             header.type = static_cast<PacketType>(packetType);
 
-            int32_t timestamp;
-
-            packet >> timestamp;
-
             // std::cout << "Received " << type << " " << timestamp << std::endl;
 
             if (header.type == PacketType::PING)
             {
-                sf::Packet reply;
-                reply << int32_t(PacketType::PONG) << timestamp;
-                sf::Socket::Status status = m_udpSocket.send(reply, sender.value(), port);
+                int32_t timestamp;
+                packet >> timestamp;
+
+                Packet reply(PacketType::PONG);
+                reply.write(timestamp);
+                auto replyPacket = reply.finalize();
+                sf::Socket::Status status = m_udpSocket.send(replyPacket, sender.value(), port);
             }
             else
                 std::cerr << "Unknown packet type: " << packetType << std::endl;
@@ -123,6 +123,8 @@ void Server::handleClients()
                 for(const auto& lobby : m_lobbies)
                 {
                     lobbiesPacket << lobby.lobbyName;
+                    lobbiesPacket << lobby.numberOfPlayers;
+                    lobbiesPacket << lobby.maxNumberOfPlayers;
                 }
 
                 auto sendPacket = lobbiesPacket.finalize();

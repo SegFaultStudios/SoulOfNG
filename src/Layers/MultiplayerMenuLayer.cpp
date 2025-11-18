@@ -9,24 +9,16 @@
 
 #include <iostream>
 
-MultiplayerMenuLayer::MultiplayerMenuLayer(sf::RenderWindow& window) : m_window(window)
+MultiplayerMenuLayer::MultiplayerMenuLayer(sf::RenderWindow& window, Client::UniquePtr client) : m_window(window)
 {
-
+    if(client)
+        m_client = std::move(client);
 }
 
 void MultiplayerMenuLayer::update(float deltaTime)
 {
     m_scene.update(deltaTime);
     m_client->update();
-
-    // if(auto result = m_dialogWidget->getResult(); result != UIDialogWidget::DialogResult::None)
-    // {
-    //     if(result == UIDialogWidget::DialogResult::Rejected)
-    //     {
-    //         m_nextLayer = NextMultiplayerMenuLayer::BACK_TO_MAIN_MENU;
-    //         this->over();
-    //     }
-    // }
 }
 
 void MultiplayerMenuLayer::draw(sf::RenderWindow& window)
@@ -59,7 +51,6 @@ void MultiplayerMenuLayer::onStart()
 
     auto findPrivateLobbyButtonId = m_scene.addUI<UIButton>("FindPrivateLobby");
 
-    // auto dialogWidgetId = m_scene.addUI<MultiplayerMenuConnectionDialogWidget>("Dialog");
     auto tableId = m_scene.addUI<UITableWidget>("LobbyTable");
 
     m_table = m_scene.getUiWidget<UITableWidget>(tableId);
@@ -68,23 +59,17 @@ void MultiplayerMenuLayer::onStart()
 
     m_table->setColumnCount(headers.size());
     m_table->setHeaderLabels(headers);
-    m_table->addRow({"Lobby #1", "2/4", "EU"});
-    m_table->addRow({"Lobby #2", "4/4", "US"});
-    m_table->addRow({"Lobby #3", "1/4", "Asia"});
 
     m_table->setPosition({0.0f, 0.0f});
     m_table->setSize({m_window.getSize().x / 1.0f, m_window.getSize().y / 1.0f});
 
-    m_table->setColumnWidth(0, 300.0f);
+    float widthPerColumn = m_window.getSize().x / headers.size();
+    
+    for(int index = 0; index < headers.size(); ++index)
+        m_table->setColumnWidth(index, widthPerColumn);
 
     m_table->hide();
 
-    // m_dialogWidget = m_scene.getUiWidget<MultiplayerMenuConnectionDialogWidget>(dialogWidgetId);
-    // m_dialogWidget->setTitle("Connect to server");
-    // m_dialogWidget->setSize({400, 250});
-    // m_dialogWidget->setPosition({200, 150});
-    // m_dialogWidget->open();
-    
     auto backButton = m_scene.getUiWidget<UIButton>(backButtonId);
     backButton->setText("Back");
     backButton->setSize({10, 3});
@@ -123,7 +108,8 @@ void MultiplayerMenuLayer::onStart()
     m_popupMessage->setPosition({m_window.getSize().x - 400.0f, m_window.getSize().y - 200.0f});
     m_popupMessage->getRawText().setCharacterSize(15);
 
-    m_client = std::make_unique<Client>();
+    if(!m_client)
+        m_client = std::make_unique<Client>();
 
     HANDLE_EVENT(m_client, Client::connected, this, [this]
     {
@@ -140,6 +126,13 @@ void MultiplayerMenuLayer::onStart()
     {
         m_popupMessage->setText("Failed to connect to server");
         m_popupMessage->showFor(3);
+        m_client->connect();
+    });
+
+    HANDLE_EVENT(m_client, Client::receivedLobbies, this, [this](const std::vector<LobbyData>& lobbyData)
+    {        
+        for(const auto& lobby : lobbyData)
+            m_table->addRow({lobby.name, std::to_string(lobby.numberOfPlayers) + "/" + std::to_string(lobby.maxNumberOfPlayers), "EU"});
     });
 
     m_client->connect();

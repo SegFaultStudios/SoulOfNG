@@ -8,22 +8,18 @@
 #include <memory>
 #include <functional>
 
-
 class UIWidget : public sf::Drawable
 {
 public:
     using SharedPtr = std::shared_ptr<UIWidget>;
     using UniquePtr = std::unique_ptr<UIWidget>;
-    using EventCallback = std::function<void()>;
 
     Signal<> clicked;
+    Signal<> hovered;
+    Signal<> left;
 
     explicit UIWidget(const std::string& name, UIWidget* parent = nullptr);
     virtual ~UIWidget();
-
-    void setOnClick(const EventCallback& callback);
-    void setOnHover(const EventCallback& callback);
-    void setOnLeave(const EventCallback& callback);
 
     void setVisible(bool isVisible);
     void setName(const std::string& name);
@@ -42,7 +38,6 @@ public:
     virtual sf::FloatRect getBoundingBox() const;
     virtual void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
     virtual void update(float deltaTime);
-
 protected:
     enum class CustomEvent
     {
@@ -67,10 +62,6 @@ private:
     sf::Vector2f m_size{10.0f, 10.0f};
 
     std::string m_name;
-
-    EventCallback m_onClick{nullptr};
-    EventCallback m_onHover{nullptr};
-    EventCallback m_onLeave{nullptr};
 };
 
 #endif //UI_WIDGET_HPP

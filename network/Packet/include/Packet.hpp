@@ -21,6 +21,11 @@ public:
         m_header.size = 0;
         m_header.type = type;
 
+        writeHeader();
+    }
+
+    void writeHeader()
+    {
         write(static_cast<uint16_t>(m_header.type));
         write(m_header.size);
     }

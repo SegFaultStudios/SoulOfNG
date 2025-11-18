@@ -4,7 +4,6 @@
 #include "Layers/Layer.hpp"
 #include "Scene.hpp"
 
-#include "Widgets/MultiplayerMenuConnectionDialogWidget.hpp"
 #include "Widgets/RotatingImage.hpp"
 
 #include "UI/UITableWidget.hpp"
@@ -15,7 +14,7 @@
 class MultiplayerMenuLayer : public Layer
 {
 public:
-    explicit MultiplayerMenuLayer(sf::RenderWindow& window);
+    explicit MultiplayerMenuLayer(sf::RenderWindow& window, Client::UniquePtr client = nullptr);
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     void handleEvent(sf::Event& event) override;
@@ -37,7 +36,6 @@ private:
     RotatingImage* m_connectionRotatingImage{nullptr};
 
     NextMultiplayerMenuLayer m_nextLayer;
-    MultiplayerMenuConnectionDialogWidget* m_dialogWidget{nullptr};
     sf::RenderWindow& m_window;
     Scene m_scene;
 };

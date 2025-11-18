@@ -6,6 +6,8 @@
 #include "Signal.hpp"
 #include "Types.hpp"
 #include "Timer.hpp"
+#include "Lobby.hpp"
+#include "PacketParser.hpp"
 
 #include <future>
 #include <memory>
@@ -21,6 +23,8 @@ public:
     Signal<> lostConnection;
     Signal<sf::Packet> receivedUDPData;
     Signal<sf::Packet> receivedTCPData;
+
+    Signal<const std::vector<LobbyData>&> receivedLobbies;
 
     Client();
 
@@ -41,6 +45,8 @@ private:
     void checkUdpSocket();
     void checkTcpSocket();
 
+    void onParsedMessage(std::unique_ptr<NetworkPacket> packet, PacketType packetType);
+
     void tryToReadConfigFile();
     
     bool tryToConnect();
@@ -58,6 +64,8 @@ private:
         sf::IpAddress ipAddress{sf::IpAddress::LocalHost};
         unsigned short port{0000};
     };
+
+    PacketParser m_parser;
 
     ConnectionData m_udpConnectionData;
     ConnectionData m_tcpConnectionData;

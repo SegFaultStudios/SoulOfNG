@@ -24,9 +24,15 @@ UIButton::UIButton(const std::string& name, UIWidget* parent) : UIWidget(name, p
     setPosition({400, 400});
     setSize({0.4, 0.4});
 
-    setOnHover([]{std::cout << "On hover\n";});
-    setOnClick([]{std::cout << "On click\n";});
-    setOnLeave([]{std::cout << "On leave\n";});
+    HANDLE_EVENT(this, UIButton::hovered, this, [this]
+    {
+        std::cout << "On hover\n";
+    });
+
+    HANDLE_EVENT(this, UIButton::left, this, [this]
+    {
+        std::cout << "On leave\n";
+    });
 }
 
 void UIButton::setTextCharacterSize(int size)

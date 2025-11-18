@@ -12,6 +12,26 @@ Client::Client()
 
     m_pingTimer = std::make_unique<Timer>();
     m_pingTimeoutTimer = std::make_unique<Timer>();
+
+    m_parser.setOnParsedPacket(std::bind(&Client::onParsedMessage, this, std::placeholders::_1, std::placeholders::_2));
+}
+
+void Client::onParsedMessage(std::unique_ptr<NetworkPacket> packet, PacketType packetType)
+{
+    if(packetType == PacketType::PONG)
+    {
+        PingPongPacket* receivedPacket = dynamic_cast<PingPongPacket*>(packet.get());
+
+        if(!receivedPacket)
+        {
+            std::cerr << "Broked PING packet\n";
+            return;
+        }
+
+        m_ping = m_clock.getElapsedTime().asMilliseconds() - receivedPacket->timestamp;
+        std::cout << "Ping: " << m_ping << " ms\n";
+        m_pingTimeoutTimer->restart();
+    }
 }
 
 void Client::tryToReadConfigFile()
@@ -123,18 +143,22 @@ void Client::checkUdpSocket()
 
     if (status == sf::Socket::Status::Done)
     {
-        int32_t type;
-        int32_t timestamp;
-        packet >> type >> timestamp;
+        m_parser.parsePacket(packet);
+        // uint16_t type;
+        // uint16_t size;
 
-        if (type == static_cast<int32_t>(PacketType::PONG))
-        {
-            m_ping = m_clock.getElapsedTime().asMilliseconds() - timestamp;
-            std::cout << "Ping: " << m_ping << " ms\n";
-            m_pingTimeoutTimer->restart();
-        }
-        else
-            receivedUDPData.emit(packet);
+        // int32_t timestamp;
+
+        // packet >> type >> size >> timestamp;
+
+        // if (type == static_cast<int32_t>(PacketType::PONG))
+        // {
+        //     m_ping = m_clock.getElapsedTime().asMilliseconds() - timestamp;
+        //     std::cout << "Ping: " << m_ping << " ms\n";
+        //     m_pingTimeoutTimer->restart();
+        // }
+        // else
+        //     receivedUDPData.emit(packet);
     }
     else if(status == sf::Socket::Status::Disconnected)
     {
@@ -144,7 +168,6 @@ void Client::checkUdpSocket()
     else
     {
     }
-
 }
 
 void Client::disconnect()
@@ -181,17 +204,32 @@ void Client::checkTcpSocket()
 
             packet >> lobbiesSize;
 
-            // std::vector<std::string> lobbiesNames;
-            // lobbiesNames.reserve(lobbiesSize);
+            std::vector<LobbyData> lobbies;
+            lobbies.reserve(lobbiesSize);
 
             for(int index = 0; index < lobbiesSize; ++index)
             {
-                std::string element;
+                std::string lobbyName;
+                uint16_t playersAmount;
+                uint16_t maxNumberOfPlayers;
 
-                packet >> element;
+                packet >> lobbyName;
+                packet >> playersAmount;
+                packet >> maxNumberOfPlayers;
 
-                std::cout << "Lobby name: " << element << std::endl;
+                std::cout << "Lobby name: " << lobbyName  << " " << playersAmount << "/" << maxNumberOfPlayers << std::endl;
+
+                LobbyData lobbyData
+                {
+                    .name = lobbyName,
+                    .numberOfPlayers = playersAmount,
+                    .maxNumberOfPlayers = maxNumberOfPlayers,
+                };
+
+                lobbies.push_back(lobbyData);
             }
+
+            receivedLobbies.emit(lobbies);
         }
 
         receivedTCPData.emit(packet);
