@@ -21,6 +21,11 @@ public:
             slot(args...);
     }
 
+    void clearSlots()
+    {
+        m_slots.clear();
+    }
+
 private:
     std::vector<Slot> m_slots;
 };

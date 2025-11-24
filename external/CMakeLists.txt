@@ -1,5 +1,6 @@
 add_subdirectory(SFML)
 add_subdirectory(json)
+add_subdirectory(steam)
 
 message("Use editor: ${SHOULD_USE_EDITOR}")
 

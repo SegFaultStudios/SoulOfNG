@@ -19,6 +19,11 @@ void UIText::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(*m_text.get(), states);
 }
 
+void UIText::setTextColor(const sf::Color& color)
+{
+    m_text->setFillColor(color);
+}
+
 std::string UIText::getText() const
 {
     return m_text->getString();

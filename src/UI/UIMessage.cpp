@@ -4,6 +4,16 @@ UIMessage::UIMessage(const std::string& name, UIWidget* parent) : UIWidget(name,
 {
     m_background.setFillColor(sf::Color(0, 0, 0, 180));
     m_background.setSize({300, 60});
+
+    m_border.setSize({m_background.getGlobalBounds().size.x, m_background.getGlobalBounds().size.y});
+    m_border.setPosition({m_background.getGlobalBounds().position.x, m_background.getGlobalBounds().position.y});
+
+    m_border.setFillColor(sf::Color::Transparent);
+    m_border.setOutlineThickness(2);
+    m_border.setOutlineColor(sf::Color::White);
+
+    m_text.setTextColor(sf::Color::White);
+
     hide();
 }
 
@@ -46,6 +56,9 @@ void UIMessage::setPosition(const sf::Vector2f& position)
         position.x + m_padding,
         position.y + m_padding
     });
+
+    m_border.setSize({m_background.getGlobalBounds().size.x, m_background.getGlobalBounds().size.y});
+    m_border.setPosition({m_background.getGlobalBounds().position.x, m_background.getGlobalBounds().position.y});
 }
 
 void UIMessage::setSize(const sf::Vector2f& size)
@@ -60,6 +73,9 @@ void UIMessage::setSize(const sf::Vector2f& size)
         position.x + m_padding,
         position.y + m_padding
     });
+
+    m_border.setSize({m_background.getGlobalBounds().size.x, m_background.getGlobalBounds().size.y});
+    m_border.setPosition({m_background.getGlobalBounds().position.x, m_background.getGlobalBounds().position.y});
 }
 
 void UIMessage::showFor(float seconds)
@@ -76,6 +92,7 @@ void UIMessage::draw(sf::RenderTarget& target, sf::RenderStates states) const
 
     m_text.draw(target, states);
     target.draw(m_background, states);
+    target.draw(m_border, states);
 }   
 
 void UIMessage::setText(const std::string& text)

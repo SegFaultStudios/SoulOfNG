@@ -9,6 +9,9 @@
 #include "UI/UITableWidget.hpp"
 #include "UI/UIMessage.hpp"
 
+#include "Widgets/AuthorizationDialogWidget.hpp"
+#include "Widgets/CreateLobbyDialogWidget.hpp"
+
 #include "Network/Client.hpp"
 
 class MultiplayerMenuLayer : public Layer
@@ -22,12 +25,18 @@ public:
     void onEnd() override;
     std::unique_ptr<Layer> getNextLayer() const override;
 private:
-    Client::UniquePtr m_client{nullptr};
+    mutable Client::UniquePtr m_client{nullptr};
 
     enum class NextMultiplayerMenuLayer
     {
-        BACK_TO_MAIN_MENU
+        BACK_TO_MAIN_MENU,
+        LOBBY
     };
+
+    CreateLobbyDialogWidget* m_createLobbyWidget{nullptr};
+    AuthorizationDialogWidget* m_authorizationWidget{nullptr};
+
+    UIText* m_centerizedText;
 
     UITableWidget* m_table{nullptr};
 

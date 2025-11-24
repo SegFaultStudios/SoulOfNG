@@ -6,6 +6,7 @@
 
 struct LobbyData
 {
+    uint32_t lobbyId;
     std::string name;
     uint16_t numberOfPlayers;
     uint16_t maxNumberOfPlayers;

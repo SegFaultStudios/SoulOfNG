@@ -27,6 +27,9 @@ public:
     virtual void setPosition(const sf::Vector2f& position);
     virtual void setSize(const sf::Vector2f& size);
 
+    void setEnabled(bool isEnabled);
+    bool isEnabled() const;
+
     const std::string& getName() const;
     const sf::Vector2f& getPosition() const;
     const sf::Vector2f& getSize() const;
@@ -53,6 +56,8 @@ protected:
 private:
     UIWidget* m_parent{nullptr};
     std::vector<UIWidget*> m_children;
+
+    bool m_isEnabled{true};
 
     bool m_isVisible{true};
     bool m_isHovered{false};

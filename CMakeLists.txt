@@ -44,6 +44,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
         sfml-network
         nlohmann_json
         NetPackets
+        steam_sdk
 )
 
 #To copy resources folder inside build directory
@@ -70,6 +71,15 @@ if(SHOULD_USE_EDITOR)
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE USE_EDITOR=0)
 endif()
+
+get_target_property(STEAM_DLL_PATH steam_sdk STEAM_RUNTIME_DLL)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${STEAM_DLL_PATH}"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+    COMMENT "Copying Steam API library"
+)
 
 if(EXISTS ${RESOURCE_DIR})
     install(DIRECTORY ${RESOURCE_DIR}/

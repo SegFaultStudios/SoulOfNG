@@ -4,6 +4,8 @@
 #include "UI/UIWidget.hpp"
 #include "UI/UIText.hpp"
 
+#include "Signal.hpp"
+
 class UIDialogWidget : public UIWidget
 {
 public:
@@ -13,6 +15,9 @@ public:
         Accepted,
         Rejected
     };
+
+    Signal<> accepted;
+    Signal<> rejected;
 
     UIDialogWidget(const std::string& name);
 

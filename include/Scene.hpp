@@ -221,10 +221,6 @@ private:
 
     sf::View m_uiView;
     std::unique_ptr<QuadTree> m_quadTree;
-
-
-
 };
-
 
 #endif //SCENE_HPP

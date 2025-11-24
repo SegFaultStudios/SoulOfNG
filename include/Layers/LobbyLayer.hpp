@@ -4,6 +4,8 @@
 #include "Layers/Layer.hpp"
 #include "Scene.hpp"
 #include "Network/Client.hpp"
+#include "Widgets/LobbyWidget.hpp"
+#include "Network/Lobby.hpp"
 
 class LobbyLayer : public Layer
 {
@@ -16,7 +18,17 @@ public:
     void onEnd() override;
     std::unique_ptr<Layer> getNextLayer() const override;
 private:
-    Client::UniquePtr m_client{nullptr};
+    enum class NextLayer
+    {
+        BACK_TO_MULTIPLAYER_MENU
+    };
+
+    NextLayer m_nextLayer;
+
+    LobbyData m_currentLobby;
+
+    LobbyWidget* m_lobbyWidget{nullptr};
+    mutable Client::UniquePtr m_client{nullptr};
     Scene m_scene;
     sf::RenderWindow& m_window;
 };

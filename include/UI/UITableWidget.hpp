@@ -10,22 +10,6 @@
 class UITableWidget : public UIWidget
 {
 public:
-    UITableWidget(const std::string& name);
-
-    void setColumnCount(std::size_t count);
-    void setRowHeight(float height);
-    void setColumnWidth(std::size_t index, float width);
-    void setHeaderLabels(const std::vector<std::string>& labels);
-
-    std::size_t addRow(const std::vector<std::string>& cells);
-    void clearRows();
-
-    void setOnRowClick(const std::function<void(std::size_t)>& callback);
-
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-    void update(float dt) override;
-    void handleEvent(const sf::Event& event, const sf::RenderWindow& window) override;
-private:
     struct Cell 
     {
         UIText text;
@@ -38,6 +22,27 @@ private:
         sf::FloatRect boundingBox;
     };
 
+    UITableWidget(const std::string& name);
+
+    void setColumnCount(std::size_t count);
+    void setRowHeight(float height);
+    void setColumnWidth(std::size_t index, float width);
+    void setHeaderLabels(const std::vector<std::string>& labels);
+
+    std::size_t addRow(const std::vector<std::string>& cells);
+    bool updateRow(int rowIndex, const std::vector<std::string>& cells);
+    void clearRows();
+
+    void setOnRowClick(const std::function<void(std::size_t)>& callback);
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void update(float dt) override;
+    void handleEvent(const sf::Event& event, const sf::RenderWindow& window) override;
+
+    Row* getSelectedRow();
+
+    const std::vector<Row>& getRows() const;
+private:
     std::vector<float> m_colWidths;
     std::vector<Row> m_rows;
 
@@ -48,6 +53,8 @@ private:
     std::vector<UIText> m_headers;
 
     sf::RectangleShape m_background;
+
+    std::optional<std::size_t> m_selectedRow;
 };
 
 #endif //UI_TABLE_WIDGET_HPP

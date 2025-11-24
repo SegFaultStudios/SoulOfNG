@@ -115,6 +115,8 @@ void UITableWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& 
 
             for (std::size_t i = 0; i < m_rows.size(); ++i)
             {
+                m_selectedRow = i;
+
                 if (m_rows[i].boundingBox.contains(mouse))
                 {
                     if (m_onRowClick) 
@@ -124,6 +126,40 @@ void UITableWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& 
             }
         }
     }
+}
+
+UITableWidget::Row* UITableWidget::getSelectedRow()
+{
+    if(!m_selectedRow.has_value())
+        return nullptr;
+
+    if(m_selectedRow.value() > m_rows.size())
+        return nullptr;
+
+    return &m_rows[m_selectedRow.value()];
+}
+
+bool UITableWidget::updateRow(int rowIndex, const std::vector<std::string>& cells)
+{
+    if(rowIndex > m_rows.size())
+        return false;
+
+    auto& row = m_rows[rowIndex];
+    row.cells.clear();
+    row.cells.resize(m_colWidths.size());
+
+    for (std::size_t i = 0; i < m_colWidths.size() && i < cells.size(); ++i)
+    {
+        row.cells[i].text.setText(cells[i]);
+        row.cells[i].text.setCharacterSize(16);
+    }
+
+    return true;
+}
+
+const std::vector<UITableWidget::Row>& UITableWidget::getRows() const
+{
+    return m_rows;
 }
 
 void UITableWidget::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -150,13 +186,26 @@ void UITableWidget::draw(sf::RenderTarget& target, sf::RenderStates states) cons
         x += m_colWidths[i];
     }
 
-    // Draw rows
-    for (auto& row : m_rows)
+    float rowY = getPosition().y + m_headerHeight;
+
+    for (std::size_t i = 0; i < m_rows.size(); ++i)
     {
-        for (std::size_t i = 0; i < row.cells.size(); ++i)
+        const auto& row = m_rows[i];
+
+        if (m_selectedRow && *m_selectedRow == i)
         {
-            // row.cells[i].text.setPosition(row.cells[i].finalPos);
-            row.cells[i].text.draw(target, states);
+            sf::RectangleShape highlight;
+            highlight.setFillColor(sf::Color(60, 60, 120, 180)); 
+            highlight.setPosition({row.boundingBox.position.x, row.boundingBox.position.y});
+            highlight.setSize({row.boundingBox.size.x, row.boundingBox.size.y});
+            target.draw(highlight, states);
         }
+
+        for (std::size_t c = 0; c < row.cells.size(); ++c)
+        {
+            row.cells[c].text.draw(target, states);
+        }
+
+        rowY += m_rowHeight;
     }
 }

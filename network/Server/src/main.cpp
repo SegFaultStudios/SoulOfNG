@@ -1,44 +1,44 @@
-#include "Server.hpp"
+#include "Server/Server.hpp"
 #include <iostream>
 
 #ifdef _WIN32
-    #include <windows.h>
+#include <windows.h>
 #else
-    #include <csignal>
+#include <csignal>
 #endif
 
-//So fucked up....
+// So fucked up....
 static Server server;
 
 #ifdef _WIN32
-    BOOL WINAPI WinHandler(DWORD ctrlType) 
+BOOL WINAPI WinHandler(DWORD ctrlType)
+{
+    if (ctrlType == CTRL_C_EVENT)
     {
-        if (ctrlType == CTRL_C_EVENT)
-        {
-            std::cout << "\nCaught CTRL+C on Windows.\n";
-            server.stop();
-            return TRUE;
-        }
-        
-        return FALSE;
+        std::cout << "\nCaught CTRL+C on Windows.\n";
+        server.stop();
+        return TRUE;
     }
-#else 
-    void signalHandler(int signal) 
-    {
-        if (signal == SIGINT)
-        {
-            std::cout << "\nCaught CTRL+C. Shutting down server...\n";
-            server.stop();
-        }
-    }   
 
-#endif 
+    return FALSE;
+}
+#else
+void signalHandler(int signal)
+{
+    if (signal == SIGINT)
+    {
+        std::cout << "\nCaught CTRL+C. Shutting down server...\n";
+        server.stop();
+    }
+}
+
+#endif
 
 int main()
 {
 #ifdef _WIN32
     SetConsoleCtrlHandler(WinHandler, TRUE);
-#else   
+#else
     std::signal(SIGINT, signalHandler);
 #endif
 
@@ -46,7 +46,7 @@ int main()
     {
         server.start();
     }
-    catch(...)
+    catch (...)
     {
         std::cerr << "Failed to run server" << std::endl;
         return -1;

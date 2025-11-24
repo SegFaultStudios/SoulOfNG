@@ -17,6 +17,16 @@ const std::string& UIWidget::getName() const
     return m_name;
 }
 
+void UIWidget::setEnabled(bool isEnabled)
+{
+    m_isEnabled = isEnabled;
+}
+
+bool UIWidget::isEnabled() const
+{
+    return m_isEnabled;
+}
+
 sf::FloatRect UIWidget::getBoundingBox() const 
 { 
     return sf::FloatRect(m_position, m_size); 
@@ -24,7 +34,7 @@ sf::FloatRect UIWidget::getBoundingBox() const
 
 void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
 {
-    if(!m_isVisible)
+    if(!m_isVisible || !isEnabled())
         return;
 
     if(auto mouseEvent = event.getIf<sf::Event::MouseMoved>())
@@ -74,7 +84,7 @@ bool UIWidget::isVisible() const
 
 void UIWidget::update(float deltaTime)
 {
-    if(!isVisible())
+    if(!isVisible() || !isEnabled())
         return;
 }
 

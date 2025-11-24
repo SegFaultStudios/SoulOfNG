@@ -2,9 +2,13 @@
 #include "Layers/MainMenuLayer.hpp"
 
 #include <filesystem>
+#include "steam/steam_api.h"
 
 Game::Game(const std::string& gameName)
 {
+    if (!SteamAPI_Init())
+        throw std::runtime_error("SteamAPI_Init failed. Make sure Steam is running and your appID is valid");
+
     auto start = std::chrono::high_resolution_clock::now();
 
     if(std::filesystem::exists("./resources/textures/"))
@@ -17,7 +21,7 @@ Game::Game(const std::string& gameName)
     else
         std::cerr << "ERROR: NO RESOURCES FOLDER" << std::endl;
 
-    m_window.create(sf::VideoMode({800, 600}), gameName, sf::Style::Titlebar | sf::Style::Close);
+    m_window.create(sf::VideoMode({1280, 720}), gameName, sf::Style::Titlebar | sf::Style::Close);
 
     sf::Image image({20, 20}, sf::Color::White);
     sf::Texture whiteTexture;

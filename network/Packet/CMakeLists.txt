@@ -6,6 +6,7 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_library(${PROJECT_NAME} STATIC
     ${SRC_DIR}/Packet.cpp
+    ${SRC_DIR}/PacketParser.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} sfml-network)

@@ -23,6 +23,7 @@ public:
 private:
     void resizeToFitText();
 
+    sf::RectangleShape m_border;
     UIText m_text;
     sf::RectangleShape m_background;
     float m_timer{0.0f};
