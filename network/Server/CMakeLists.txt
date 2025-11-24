@@ -15,3 +15,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC NetPackets sfml-network)
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION .
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION lib
+)

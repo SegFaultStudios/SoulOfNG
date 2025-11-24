@@ -32,6 +32,11 @@ void UIDialogWidget::close()
 void UIDialogWidget::setResult(DialogResult result)
 {
     m_result = result;
+
+    if(m_result == DialogResult::Accepted)
+        accepted.emit();
+    else if(m_result == DialogResult::Rejected)
+        rejected.emit();
 }
 
 UIDialogWidget::DialogResult UIDialogWidget::exec(sf::RenderWindow& window)

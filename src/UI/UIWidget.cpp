@@ -1,9 +1,10 @@
 #include "UI/UIWidget.hpp"
 #include <iostream>
 
-UIWidget::UIWidget(const std::string& name) : m_name(name)
+UIWidget::UIWidget(const std::string& name, UIWidget* parent) : m_name(name), m_parent(parent)
 {
-
+    if(parent)
+        parent->m_children.push_back(this);
 }
 
 void UIWidget::setName(const std::string& name)
@@ -16,9 +17,24 @@ const std::string& UIWidget::getName() const
     return m_name;
 }
 
+void UIWidget::setEnabled(bool isEnabled)
+{
+    m_isEnabled = isEnabled;
+}
+
+bool UIWidget::isEnabled() const
+{
+    return m_isEnabled;
+}
+
+sf::FloatRect UIWidget::getBoundingBox() const 
+{ 
+    return sf::FloatRect(m_position, m_size); 
+}
+
 void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
 {
-    if(!m_isVisible)
+    if(!m_isVisible || !isEnabled())
         return;
 
     if(auto mouseEvent = event.getIf<sf::Event::MouseMoved>())
@@ -31,8 +47,7 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
         {
             handleCustomEvent(CustomEvent::HOVERED);
 
-            if(m_onHover)
-                m_onHover();
+            hovered.emit();
         }
         else if(!isHovered && m_isHovered)
         {
@@ -40,8 +55,7 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
 
             m_wasHoveredBeforeClick = true;
 
-            if(m_onLeave)
-                m_onLeave();
+            left.emit();
         }
 
         m_isHovered = isHovered;
@@ -51,9 +65,8 @@ void UIWidget::handleEvent(const sf::Event& event, const sf::RenderWindow& windo
         if(mouseClick->button == sf::Mouse::Button::Left && m_isHovered)
         {   
             handleCustomEvent(CustomEvent::CLICKED);
-
-            if(m_onClick)
-                m_onClick();
+            
+            clicked.emit();
         }
         else if (mouseClick->button == sf::Mouse::Button::Left && !m_isHovered && m_wasHoveredBeforeClick)
         {
@@ -71,7 +84,8 @@ bool UIWidget::isVisible() const
 
 void UIWidget::update(float deltaTime)
 {
-
+    if(!isVisible() || !isEnabled())
+        return;
 }
 
 const sf::Vector2f& UIWidget::getPosition() const
@@ -107,21 +121,6 @@ void UIWidget::show()
 void UIWidget::setVisible(bool isVisible)
 {
     m_isVisible = isVisible;
-}
-
-void UIWidget::setOnClick(const EventCallback& callback)
-{
-    m_onClick = callback;
-}
-
-void UIWidget::setOnHover(const EventCallback& callback)
-{
-    m_onHover = callback;
-}
-
-void UIWidget::setOnLeave(const EventCallback& callback)
-{
-    m_onLeave = callback;
 }
 
 UIWidget::~UIWidget() = default;

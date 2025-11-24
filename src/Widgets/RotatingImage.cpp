@@ -9,6 +9,9 @@ RotatingImage::RotatingImage(const std::string& name, sf::Texture* texture) : UI
 
 void RotatingImage::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
+    if(!isVisible())
+        return;
+    
     // states.transform.translate(getPosition());
     target.draw(*m_sprite.get(), states);
 }
@@ -16,6 +19,9 @@ void RotatingImage::draw(sf::RenderTarget& target, sf::RenderStates states) cons
 void RotatingImage::update(float deltaTime)
 {
     UIWidget::update(deltaTime);
+
+    if(!isVisible())
+        return;
 
     if(m_shoudSpin)
     {

@@ -24,6 +24,7 @@ public:
     void setText(const std::string& text);
     void setCharacterSize(unsigned int size);
     unsigned int getCharacterSize() const;
+    void setTextColor(const sf::Color& color);
     std::string getText() const;
 
     sf::Text* getRawText() const;

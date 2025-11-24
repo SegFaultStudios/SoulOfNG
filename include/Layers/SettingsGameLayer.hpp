@@ -4,6 +4,9 @@
 #include "Layers/Layer.hpp"
 #include "Scene.hpp"
 
+#include "UI/UICheckBox.hpp"
+#include "UI/UIButton.hpp"
+
 class SettingsGameLayer : public Layer
 {
 public:
@@ -18,6 +21,8 @@ public:
 private:
     Scene m_scene;
     sf::RenderWindow& m_window;
+    UICheckBox* m_fullscreenCheckBox{nullptr};
+    UIButton* m_backButton{nullptr};
 };
 
 #endif //SETTINGS_GAME_LAYER_HPP
