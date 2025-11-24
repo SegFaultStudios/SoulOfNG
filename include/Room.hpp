@@ -25,6 +25,7 @@ private:
         WallAnchor( TypeAnchor type, sf::Vector2f position, sf::Vector2f size)
             : w_type(type), w_position(position), w_size(size) {};
     };
+    float m_epsilon = 1.0f;
 
 public:
 

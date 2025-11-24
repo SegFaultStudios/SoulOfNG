@@ -34,6 +34,7 @@ void MainGameLayer::draw(sf::RenderWindow& window)
 #endif
 
     window.draw(m_rayLine);
+    
 
     // window.setTitle(std::to_string(1.0f / deltaTime));
 
@@ -115,15 +116,21 @@ void MainGameLayer::onStart()
     m_rayLine.resize(2);
     m_rayLine[0].color = sf::Color::Red;
     m_rayLine[1].color = sf::Color::Green;
-    m_scene.initQuadTree();
+
     auto territories = m_BSPGenerator.getTerritories();
+    std::cout << "walls: " << std::endl;
     for (auto ter : territories) {
         Room room(ter.position, ter.size);
         auto& roomWalls =room.getWalls();
         for (auto& wall : roomWalls) {
+            std::cout << "pos: " << wall->getGlobalBounds().position.x << ", " << wall->getGlobalBounds().position.y << std::endl;
+            std::cout << "size: " << wall->getGlobalBounds().size.x << ", " << wall->getGlobalBounds().size.y << std::endl;
             m_scene.addEntity(std::move(wall));
+
         }
     }
+    m_scene.initQuadTree();
+
 }
 
 void MainGameLayer::onEnd()

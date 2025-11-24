@@ -30,7 +30,7 @@ std::unique_ptr<Wall> Room::createWallFromAnchor(const Room::WallAnchor& anchor)
     auto center = bounds.getCenter();
     wall->setOrigin(center);
     wall->setPosition(anchor.w_position);
-    wall->setScale({anchor.w_size.x / 20, anchor.w_size.y / 20});
+    wall->setScale({(anchor.w_size.x) / 20, (anchor.w_size.y) / 20});
     if (anchor.w_position.x == 0.0f && anchor.w_position.y == 0) {
         std::cout << "pos of First wall at 0;0  " << anchor.w_position.x << anchor.w_position.y << std::endl;
         std::cout << "getGlob   " << wall->getGlobalBounds().position.x << " " << wall->getGlobalBounds().position.y << std::endl;
@@ -62,7 +62,7 @@ void Room::addAnchorsForHorizontal(bool doesHaveExit, float positionY) {
 
     if (doesHaveExit) {
 
-        float wallSizeX = half(m_size.x - m_exitWidth - m_wallThickness);
+        float wallSizeX = half(m_size.x - m_exitWidth - m_wallThickness) + m_epsilon;
         float firstWallPosX = m_position.x + half(m_wallThickness + wallSizeX);
         float exitPosX = m_position.x + half(m_size.x);
         float secondWallPosX = m_position.x + half(m_size.x + m_exitWidth + wallSizeX);
@@ -78,7 +78,7 @@ void Room::addAnchorsForHorizontal(bool doesHaveExit, float positionY) {
             sf::Vector2f(wallSizeX, m_wallThickness));
 
     } else {
-        float wallSizeX = m_size.x  - m_wallThickness;
+        float wallSizeX = m_size.x  - m_wallThickness + m_epsilon;
         float wallPosX = m_position.x + half(m_size.x);
 
         m_anchors.emplace_back(TypeAnchor::SOLID_WALL,
@@ -89,7 +89,7 @@ void Room::addAnchorsForHorizontal(bool doesHaveExit, float positionY) {
 
 void Room::addAnchorsForVertical(bool doesHaveExit, float positionX) {
     if (doesHaveExit) {
-        float wallSizeY = half(m_size.y - m_exitWidth - m_wallThickness);
+        float wallSizeY = half(m_size.y - m_exitWidth - m_wallThickness) + m_epsilon;
         float firstWallPosY = m_position.y + half(m_wallThickness + wallSizeY);
         float exitPosY = m_position.y + half(m_size.y);
         float secondWallPosY = m_position.y + half(m_size.y + m_exitWidth + wallSizeY);
@@ -105,7 +105,7 @@ void Room::addAnchorsForVertical(bool doesHaveExit, float positionX) {
             sf::Vector2f(m_wallThickness, wallSizeY));
 
     } else {
-        float wallSizeY = m_size.y - m_wallThickness;
+        float wallSizeY = m_size.y - m_wallThickness + m_epsilon;
         float wallPosY = m_position.y + half(m_size.y);
 
         m_anchors.emplace_back(TypeAnchor::SOLID_WALL,

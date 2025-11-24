@@ -3,14 +3,19 @@
 
 QuadTree::QuadTree(const sf::FloatRect& bounds) : m_bounds(bounds) {}
 
+
 std::vector<Entity*>QuadTree::findEntitiesAround(const sf::FloatRect& area) const {
+
     std::vector<Entity*> found;
-    std::cout<<"searching around player: posX, posY: " << area.position.x << ", " << area.position.y << std::endl;
+
     if (!m_bounds.findIntersection(area)) {
-        std::cout << "exited the note pos " << m_bounds.position.x << " " << m_bounds.position.y << std::endl;
         return found;
     }
-    std::cout << "checking node with pos " << m_bounds.position.x << " " << m_bounds.position.y << std::endl;
+    /*std::cout << "======NEW NODE======" << std::endl;
+    std::cout << "Current node pos: " << m_bounds.position.x << ", " << m_bounds.position.y << std::endl;
+    std::cout << "Current node size: " << m_bounds.size.x << ", " << m_bounds.size.y << std::endl << std::endl;
+    std::cout << "Searching area size: " << area.size.x << ", " << area.size.y << std::endl;
+    std::cout << "Searching area position: " << area.position.x << ", " << area.position.y << std::endl;*/
     for (auto entity : m_entities) {
 
         if (entity->getGlobalBounds().findIntersection(area)) {
@@ -23,8 +28,11 @@ std::vector<Entity*>QuadTree::findEntitiesAround(const sf::FloatRect& area) cons
             found.insert(found.end(), childFound.begin(), childFound.end());
         }
     }
+    //std::cout << "=====NODE END=====" << std::endl << std::endl;
+
     return found;
 }
+
 
 bool QuadTree::contains(const sf::FloatRect& bounds) const {
     return m_bounds.contains({bounds.position.x, bounds.position.y}) &&
@@ -35,6 +43,10 @@ bool QuadTree::insertInNode(Entity *entity) {
 
     auto bounds = entity->getGlobalBounds();
     if (!contains(bounds)) {
+        //std::cout << "Entity is out of area, pos: " << bounds.position.x << ", " << bounds.position.y << std::endl
+        //<< "size: " << bounds.size.x << ", " << bounds.size.y << std::endl << std::endl;
+        //std::cout << "m_bounds position: " << m_bounds.position.x << ", " << m_bounds.position.y << std::endl <<
+        //    "size: " << m_bounds.size.x << ", " << m_bounds.size.y << std::endl << std::endl;
         return false;
     }
 
@@ -109,4 +121,107 @@ int QuadTree::getIndex(const sf::FloatRect& bounds) const {
     if (fitsBottom && fitsRight) return 3;
     return -1;
 }
+
+int QuadTree::printAllEntities() const {
+    int entityCount = 0;
+    /*std::cout << "===NEW_NODE===" << std::endl;
+
+    std::cout << "Node pos: " << m_bounds.position.x << ", " << m_bounds.position.y << std::endl;
+    std::cout << "Node size: " << m_bounds.size.x << ", " << m_bounds.size.y << std::endl; */
+
+    for (auto& entity : m_entities) {
+        //std::cout << "entity pos: " << entity->getGlobalBounds().position.x << ", " << entity->getGlobalBounds().position.y << std::endl;
+        //std::cout << "entity size: " << entity->getGlobalBounds().size.x << ", " << entity->getGlobalBounds().size.y << std::endl;
+        entityCount++;
+    }
+    //std::cout << "===END_NODE===" << std::endl;
+
+    if (m_divided)
+        for (auto& child: m_children) {
+            entityCount += child->printAllEntities();
+        }
+    return entityCount;
+
+}
+
+void QuadTree::drawSearchingNode(sf::RenderTarget& target) const {
+
+    sf::RectangleShape leftBound;
+    sf::RectangleShape rightBound;
+    sf::RectangleShape topBound;
+    sf::RectangleShape bottomBound;
+
+    float thickness = 3.0f;
+
+    leftBound.setPosition({
+        m_bounds.position.x, m_bounds.position.y });
+
+    rightBound.setPosition({
+        m_bounds.position.x + m_bounds.size.x, m_bounds.position.y });
+
+    topBound.setPosition({
+        m_bounds.position.x, m_bounds.position.y });
+
+    bottomBound.setPosition({
+        m_bounds.position.x, m_bounds.position.y + m_bounds.size.y
+        });
+
+    leftBound.setSize({ thickness, m_bounds.size.y });
+    rightBound.setSize({ thickness, m_bounds.size.y });
+    topBound.setSize({ m_bounds.size.x, thickness });
+    bottomBound.setSize({ m_bounds.size.x, thickness });
+
+
+    leftBound.setFillColor(sf::Color::Green);
+    rightBound.setFillColor(sf::Color::Green);
+    topBound.setFillColor(sf::Color::Green);
+    bottomBound.setFillColor(sf::Color::Green);
+
+    
+}
+
+void QuadTree::drawNodes(sf::RenderTarget& target) const {
+
+    sf::RectangleShape leftBound;
+    sf::RectangleShape rightBound;
+    sf::RectangleShape topBound;
+    sf::RectangleShape bottomBound;
+
+    float thickness = 3.0f;
+
+    leftBound.setPosition({
+        m_bounds.position.x, m_bounds.position.y });
+
+    rightBound.setPosition({
+        m_bounds.position.x + m_bounds.size.x, m_bounds.position.y });
+
+    topBound.setPosition({
+        m_bounds.position.x, m_bounds.position.y });
+
+    bottomBound.setPosition({
+        m_bounds.position.x, m_bounds.position.y + m_bounds.size.y
+        });
+
+    leftBound.setSize({ thickness, m_bounds.size.y });
+    rightBound.setSize({ thickness, m_bounds.size.y });
+    topBound.setSize({ m_bounds.size.x, thickness });
+    bottomBound.setSize({ m_bounds.size.x, thickness });
+
+    
+    leftBound.setFillColor(sf::Color::Red);
+    rightBound.setFillColor(sf::Color::Red);
+    topBound.setFillColor(sf::Color::Red);
+    bottomBound.setFillColor(sf::Color::Red);
+
+    if (m_divided) {
+        for (auto& child : m_children) {
+            child->drawNodes(target);
+        }
+    }
+    target.draw(leftBound);
+    target.draw(rightBound);
+    target.draw(topBound);
+    target.draw(bottomBound);
+}
+
 

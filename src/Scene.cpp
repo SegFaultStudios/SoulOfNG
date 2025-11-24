@@ -207,72 +207,91 @@ void Scene::handleInput(const sf::Event& event, sf::RenderWindow& window)
 void Scene::initQuadTree() {
     if (m_entities.empty()) return;
     sf::FloatRect worldBounds;
+     
     for (const auto& [id, entity] : m_entities) {
         if (!dynamic_cast<Player*>(entity.get()))
         {
-                auto bounds = entity->getGlobalBounds();
-                worldBounds = getTwoEntitiesBounds(worldBounds, bounds);
+            auto bounds = entity->getGlobalBounds();
+            worldBounds = getTwoEntitiesBounds(worldBounds, bounds);
+            
         }
     }
+    float epsilon = 1.0f;
+    worldBounds = sf::FloatRect({worldBounds.position.x - epsilon, worldBounds.position.y - epsilon},
+        {worldBounds.size.x + 2 * epsilon, worldBounds.size.y + 2 * epsilon});
+
+    std::cout<< "the parrent's size: " << worldBounds.size.x << ", " << worldBounds.size.y << std::endl << std::endl;
     m_quadTree = std::make_unique<QuadTree>(worldBounds);
 
 
-}
+    for (const auto& [id, entity] : m_entities) {
+        if (!dynamic_cast<Player*>(entity.get()))
+        {
+            m_quadTree->insertInNode(entity.get());
+        }
+    }
+    std::cout << m_quadTree->printAllEntities();
+
+ }
 
 sf::FloatRect Scene::getTwoEntitiesBounds(sf::FloatRect area1, sf::FloatRect area2) const {
-    float newPosX, newPosY, newSizeX, newSizeY;
 
-    if (area1.position.x < area2.position.x) {
-         newPosX = area1.position.x;
-         newSizeX = (area2.position.x + area2.size.x) - area1.position.x;
-    } else {
-         newPosX = area2.position.x;
-         newSizeX = (area1.position.x + area1.size.x) - area2.position.x;
-    }
-    if (area1.position.y < area2.position.y) {
-         newPosY = area1.position.y;
-         newSizeY = (area2.position.y + area2.size.y) - area1.position.y;
-    } else {
-         newPosY = area2.position.y;
-         newSizeY = (area1.position.y + area1.size.y) - area2.position.y;
-    }
+    float left = std::min(area1.position.x, area2.position.x);
+    float right = std::max(area1.position.x + area1.size.x, area2.position.x + area2.size.x);
+    float bottom = std::max(area1.position.y + area1.size.y, area2.position.y + area2.size.y);
+    float top = std::min(area1.position.y, area2.position.y);
 
-    return sf::FloatRect({newPosX, newPosY}, {newSizeX, newSizeY} );
+    return sf::FloatRect({left, top}, {right - left, bottom - top} );
 }
 
 void Scene::update(float deltaTime)
 {
     Player* player = nullptr;
-    sf::Vector2f oldPlayerPos;
+    sf::FloatRect playerBounds;
 
     for (auto& [id, entity] : m_entities) {
-        if (Player *p = dynamic_cast<Player*>(entity.get())) {
+        if (Player* p = dynamic_cast<Player*>(entity.get())) {
             player = p;
-            oldPlayerPos = player->getPosition();
+            playerBounds = player->getGlobalBounds();
             break;
         }
     }
 
-    for(const auto& [id, entity] : m_entities)
+    for (const auto& [id, entity] : m_entities)
         entity->update(deltaTime);
 
-    for(const auto& [id, uiWidget] : m_uiWidgets)
+    for (const auto& [id, uiWidget] : m_uiWidgets)
         uiWidget->update(deltaTime);
+
+
+
+
     if (player) {
-        if (player->getPosition() != oldPlayerPos) {
-            auto playerArea = player->getGlobalBounds();
-            sf::Vector2f areaPos(playerArea.position.x - playerArea.size.x * 2, playerArea.position.y - playerArea.size.y * 2);
-            sf::Vector2f areaSize(playerArea.size.x * 4, playerArea.size.y * 4);
 
-            auto entitiesAround = m_quadTree->findEntitiesAround({areaPos, areaSize});
+        /*auto playerBounds = player->getPotentialBounds();
+        if (player->getPotentialBounds().position != oldPlayerBounds.position) {
+            float searchRadius = 80.0f;
+
+            sf::FloatRect area(
+                { playerBounds.position.x - searchRadius,
+                playerBounds.position.y - searchRadius },
+                { searchRadius * 2, searchRadius * 2 });
+
+            auto entitiesAround = m_quadTree->findEntitiesAround(area);
+            std::cout << "Entities around: " << entitiesAround.size() << std::endl;
+
             for (auto& entity : entitiesAround) {
-                if (player->getGlobalBounds().findIntersection(entity->getGlobalBounds())) {
-                    player->setPosition(oldPlayerPos);
-                    break;
-                }
+                auto entityBounds = entity->getGlobalBounds();
 
+                float epsilon = 0.01f;
+
+                if (playerBounds.findIntersection(entityBounds)) {
+
+
+                }
             }
-        }
+        }*/
+
     }
 }
 
@@ -303,6 +322,9 @@ void Scene::draw(sf::RenderWindow& target)
         target.draw(*uiWidget);
 
     target.setView(currentView);
+    if (m_quadTree)
+        m_quadTree->drawNodes(target);
+    
 }
 
 uint64_t Scene::findEntityWithName(const std::string& name) const

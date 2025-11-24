@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "QuadTree.hpp"
+#include "Entities/Entity.hpp"
 
 class Scene
 {
@@ -221,6 +222,7 @@ private:
 
     sf::View m_uiView;
     std::unique_ptr<QuadTree> m_quadTree;
+
 
 
 
