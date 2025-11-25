@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.16)
 project(SoulOfNG LANGUAGES CXX)
 
+if(MSVC)
+    
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    
+    add_compile_options(
+        "$<$<CONFIG:Debug>:/MTd>"
+        "$<$<CONFIG:Release>:/MT>"
+    )
+endif()
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -40,7 +50,9 @@ endif()
 file(GLOB_RECURSE PROJECT_HEADERS  ${INCLUDE_DIR}/*.h ${INCLUDE_DIR}/*.hpp)
 file(GLOB_RECURSE PROJECT_SOURCES ${SRC_DIR}/*.cpp)
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS})
+add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS}
+        src/Physics/CollisionSystem.cpp
+        include/Physics/CollisionSystem.hpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/external/SFML/include/)
 
@@ -100,6 +112,8 @@ if(EXISTS ${RESOURCE_DIR})
     )
     message(STATUS "Resources will be installed to: resources/")
 endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE SFML_STATIC)
 
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION .

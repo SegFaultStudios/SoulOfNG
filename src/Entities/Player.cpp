@@ -42,16 +42,34 @@ void Player::setInventory(Inventory* inventory)
 
 void Player::update(float deltaTime)
 {
+    //m_potentialPosition = this->getGlobalBounds().position;
+    m_potentialMove = { 0, 0 };
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) {
-        setPosition({getPosition().x  + m_speed * deltaTime, getPosition().y});
+        //setPosition({ getPosition().x + m_speed * deltaTime, getPosition().y });
+        //m_potentialPosition += sf::Vector2f(m_speed * deltaTime, 0.0f);
+        m_potentialMove += sf::Vector2f(m_speed * deltaTime, 0.0f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) {
-        setPosition({getPosition().x - m_speed * deltaTime, getPosition().y});
+        //setPosition({getPosition().x - m_speed * deltaTime, getPosition().y});
+        //m_potentialPosition += sf::Vector2f(-m_speed * deltaTime, 0.0f);
+        m_potentialMove += sf::Vector2f(-m_speed * deltaTime, 0.0f);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)) {
-        setPosition({getPosition().x, getPosition().y  - m_speed * deltaTime});
+        //setPosition({getPosition().x, getPosition().y  - m_speed * deltaTime});
+        //m_potentialPosition += sf::Vector2f(0.0f, -m_speed * deltaTime);
+        m_potentialMove += sf::Vector2f(0.0f, -m_speed * deltaTime);
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) {
-        setPosition({getPosition().x, getPosition().y + m_speed * deltaTime});
+        //setPosition({getPosition().x, getPosition().y + m_speed * deltaTime});
+        //m_potentialPosition += sf::Vector2f(0.0f, m_speed * deltaTime);
+        m_potentialMove += sf::Vector2f(0.0f, m_speed * deltaTime);
     }
+    //if (m_potentialPosition != potentialMove) {
+        potentialMoveChanged.emit(m_potentialMove);
+    //}
+ }
+
+sf::Vector2f Player::getPotentialMove() const {
+    return m_potentialMove;
 }

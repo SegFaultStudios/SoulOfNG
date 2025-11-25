@@ -4,7 +4,7 @@
 #include <iostream>
 #include "Widgets/Inventory.hpp"
 #include "Entities/Player.hpp"
-
+#include "CollisionHandler.hpp"
 #include "Layers/MainMenuLayer.hpp"
 
 #include "Animations/FrameAnimation.hpp"
@@ -40,6 +40,7 @@ void MainGameLayer::draw(sf::RenderWindow& window)
 #endif
 
     window.draw(m_rayLine);
+    
 
     // s_frameAnimation.draw(window);
 
@@ -97,19 +98,19 @@ void MainGameLayer::onStart()
 
     auto playerId = m_scene.findEntityWithName("Player");
 
-    auto player = m_scene.getEntity<Player>(playerId);
+    m_player = m_scene.getEntity<Player>(playerId);
 
     //Create default player??
-    if(!player)
+    if(!m_player)
     {
         std::cerr << "Failed to find player. Creating default player...\n";
         playerId = m_scene.addEntity<Player>("Player");
-        player = m_scene.getEntity<Player>(playerId);
+        m_player = m_scene.getEntity<Player>(playerId);
     }
     else
     {
-        player->setInventory(inventory);
-        m_camera->setTarget(player);
+        m_player->setInventory(inventory);
+        m_camera->setTarget(m_player);
     }
 
 #if USE_EDITOR
@@ -120,13 +121,17 @@ void MainGameLayer::onStart()
     m_rayLine.resize(2);
     m_rayLine[0].color = sf::Color::Red;
     m_rayLine[1].color = sf::Color::Green;
-    m_scene.initQuadTree();
+
     auto territories = m_BSPGenerator.getTerritories();
+    std::cout << "walls: " << std::endl;
     for (auto ter : territories) {
         Room room(ter.position, ter.size);
         auto& roomWalls =room.getWalls();
         for (auto& wall : roomWalls) {
+            std::cout << "pos: " << wall->getGlobalBounds().position.x << ", " << wall->getGlobalBounds().position.y << std::endl;
+            std::cout << "size: " << wall->getGlobalBounds().size.x << ", " << wall->getGlobalBounds().size.y << std::endl;
             m_scene.addEntity(std::move(wall));
+
         }
     }
 
@@ -142,6 +147,42 @@ void MainGameLayer::onStart()
     // s_frameAnimation.addFrame("./resources/animations/Sprite-0012.png");
 
     // s_frameAnimation.pause();
+    m_scene.initQuadTree();
+
+    HANDLE_EVENT(m_player, Player::potentialMoveChanged, this, [this](const sf::Vector2f& step)
+    {
+        auto playerBounds = m_player->getGlobalBounds();
+        auto potentialPlayerMove = m_player->getPotentialMove();
+
+        float searchRadius = 80.0f;
+
+        sf::FloatRect area(
+            { playerBounds.position.x - searchRadius,
+            playerBounds.position.y - searchRadius },
+            { searchRadius * 2, searchRadius * 2 });
+       
+        
+        auto entitiesAround = m_scene.getQuadTree()->findEntitiesAround(area);
+        //std::cout << "Entities around: " << entitiesAround.size() << std::endl;
+        bool pidoras = false;
+        for (auto& entity : entitiesAround) {
+            auto entityBounds = entity->getGlobalBounds();
+
+            if (playerBounds.findIntersection(entityBounds)) {
+                pidoras = true;
+                //std::cout << "gay found" << std::endl;
+                auto pos = CollisionHandler::resolveNoRotationWallMovement(playerBounds, potentialPlayerMove, entityBounds);
+                //std::cout << "pos x: " << pos.x << " y: " << pos.y << std::endl;
+                m_player->setPosition(pos);
+                break;
+            }
+
+        }
+        if (!pidoras) {
+            m_player->setPosition(m_player->getPosition() + potentialPlayerMove);
+        }
+    });
+
 }
 
 void MainGameLayer::onEnd()

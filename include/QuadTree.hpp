@@ -10,9 +10,13 @@ class QuadTree {
 
 public:
     QuadTree(const sf::FloatRect& bounds);
+    bool insertInNode(Entity* entity);
     std::vector<Entity*>findEntitiesAround(const sf::FloatRect& area) const;
     void clear();
-    void draw(sf::RenderWindow& window) const;
+    void drawSearchingNode(sf::RenderTarget& target) const;
+    void drawNodes(sf::RenderTarget& target) const;
+    int printAllEntities() const;
+
 
 
 private:
@@ -24,7 +28,7 @@ private:
     void subdivide();
     int getIndex(const sf::FloatRect& bounds) const;
     bool contains(const sf::FloatRect& bounds) const;
-    bool insertInNode(Entity* entity);
+
 
 };
 

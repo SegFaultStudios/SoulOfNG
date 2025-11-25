@@ -9,6 +9,7 @@
 #include "QuadTree.hpp"
 #include "AssetsManager.hpp"
 #include "Widgets/EscapeUI.hpp"
+#include "Entities/Player.hpp"
 
 #if USE_EDITOR
     #include "Editor.hpp"
@@ -29,12 +30,12 @@ private:
     sf::VertexArray m_rayLine;
     sf::RenderWindow& m_window;
     Scene m_scene;
-    BSPGenerator m_BSPGenerator{sf::Vector2f(100, 100), 4,
+    BSPGenerator m_BSPGenerator{sf::Vector2f(50, 50), 3,
         sf::FloatRect(sf::Vector2f(0, 0),
-            sf::Vector2f(1000, 1000))};
+            sf::Vector2f(500, 500))};
 
 
-
+    Player* m_player{nullptr};
 
     std::unique_ptr<Camera> m_camera{nullptr};
 #if USE_EDITOR

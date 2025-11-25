@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 #include "QuadTree.hpp"
+#include "Entities/Entity.hpp"
 
 class Scene
 {
@@ -211,6 +212,10 @@ public:
 
     void setCurrentRoom(std::unique_ptr<Room> room);
 
+    QuadTree* getQuadTree() {
+        return m_quadTree.get();
+    }
+
 
 private:
     //*Id = entity
@@ -221,6 +226,7 @@ private:
 
     sf::View m_uiView;
     std::unique_ptr<QuadTree> m_quadTree;
+
 };
 
 #endif //SCENE_HPP
