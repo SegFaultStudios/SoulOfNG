@@ -24,7 +24,7 @@ public:
 
 private:
 #ifdef _WIN32
-    static LONG WINAPI crashHandler(EXCEPTION_POINTERS* ExceptionInfo)
+    static LONG WINAPI crashHandler(EXCEPTION_POINTERS* ExceptionInfo);
 #else
     static void crashHandler(int signum);
 #endif
