@@ -23,6 +23,8 @@ public:
     Game(const std::string& gameName);
 
     void run();
+
+    void cleanup();
 private:
     sf::RenderWindow m_window;
     std::unique_ptr<Layer> m_layer{nullptr};

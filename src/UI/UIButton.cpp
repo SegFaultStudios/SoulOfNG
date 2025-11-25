@@ -43,7 +43,7 @@ void UIButton::setTexturedColor(const sf::Color &color)
         {static_cast<unsigned int>(getSize().x),
          static_cast<unsigned int>(getSize().y)},
         color);
-
+    
     sf::Texture texture;
 
     if (!texture.loadFromImage(image))
@@ -87,7 +87,7 @@ void UIButton::updateTextPosition()
 
 void UIButton::setTexture(const sf::Texture &texture)
 {
-    m_sprite->setTexture(texture);
+    m_sprite->setTexture(texture, true);
 }
 
 const sf::Texture &UIButton::getTexture() const

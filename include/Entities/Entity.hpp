@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "AssetsManager.hpp"
+#include "Signal.hpp"
 
 enum class EntityEnum : uint8_t
 {
@@ -17,6 +18,8 @@ class Entity
 public:
     using SharedPtr = std::shared_ptr<Entity>;
     using UniquePtr = std::unique_ptr<Entity>;
+
+    Signal<sf::Vector2f> positionChanged;
 
     explicit Entity(const std::string& name) : m_name(name)
     {
@@ -75,6 +78,7 @@ public:
     {
         m_position = position;
         sprite_->setPosition(position);
+        positionChanged.emit(position);
     }
 
     const sf::Vector2f& getPosition() const

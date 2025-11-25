@@ -1,25 +1,27 @@
 #include "Game.hpp"
 #include "Layers/MainMenuLayer.hpp"
-
+#include "Network/SteamBackend.hpp"
 #include <filesystem>
-#include "steam/steam_api.h"
+#include "Logger.hpp"
 
 Game::Game(const std::string& gameName)
 {
-    if (!SteamAPI_Init())
-        throw std::runtime_error("SteamAPI_Init failed. Make sure Steam is running and your appID is valid");
-
     auto start = std::chrono::high_resolution_clock::now();
+
+    Logger::createDefaultLogger();
+
+    if(!SteamBackend::init())
+        std::cerr << "Failed to init STEAM client. Steam features will be disabled\n";
 
     if(std::filesystem::exists("./resources/textures/"))
     {
-        std::cout << "Loading all textures" << std::endl;
+        LOG_DEBUG("Loading all textures");
         for(const auto& entry : std::filesystem::recursive_directory_iterator("./resources/textures/"))
             AssetsManager::instance().loadTexture(entry.path().string());
-        std::cout << "Loaded successfully " << AssetsManager::instance().getTextures().size() << " textures\n"; 
+        LOG_DEBUG("Loaded successfully " + std::to_string(AssetsManager::instance().getTextures().size()) + " textures");
     }
     else
-        std::cerr << "ERROR: NO RESOURCES FOLDER" << std::endl;
+        LOG_WARNING("No resources folder");
 
     m_window.create(sf::VideoMode({1280, 720}), gameName, sf::Style::Titlebar | sf::Style::Close);
 
@@ -34,9 +36,9 @@ Game::Game(const std::string& gameName)
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     
-    std::cout << "Game loading took: " << duration.count() << " microseconds\n";
-    std::cout << "Game loading took: " << duration.count() / 1000.0 << " milliseconds\n";
-    std::cout << "Game loading took: " << duration.count() / 1000000.0 << " seconds\n";
+    LOG_DEBUG("Game loading took: " + std::to_string(duration.count()) + " microseconds");
+    LOG_DEBUG("Game loading took: " + std::to_string(duration.count() / 1000.0) + " milliseconds");
+    LOG_DEBUG("Game loading took: " + std::to_string(duration.count() / 1000000.0) + " seconds");
 
     m_layer = std::make_unique<MainMenuLayer>(m_window);
     m_layer->onStart();
@@ -44,10 +46,8 @@ Game::Game(const std::string& gameName)
 
 void Game::run()
 {
-
     sf::Clock clock;
     float deltaTime = 0.0f;
-
 
     while (m_window.isOpen())
     {
@@ -65,8 +65,8 @@ void Game::run()
             }
             else
             {
-                std::cerr << "No more layers. Terminating game..." << std::endl;
-                return;
+                LOG_WARNING("No more layers. Terminating game...");
+                break;
             }
         }
 
@@ -86,4 +86,9 @@ void Game::run()
         m_layer->draw(m_window);
         m_window.display();
     }
+}
+
+void Game::cleanup()
+{
+    SteamBackend::destroy();
 }

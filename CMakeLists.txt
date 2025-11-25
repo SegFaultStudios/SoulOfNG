@@ -6,6 +6,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Building in DEBUG mode")
+    add_compile_definitions(DEBUG_MODE=1)
+else()
+    add_compile_definitions(DEBUG_MODE=0)
+    message("Building in RELEASE mode")
+endif()
+
 if (MINGW)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
 endif()
@@ -74,12 +82,16 @@ endif()
 
 get_target_property(STEAM_DLL_PATH steam_sdk STEAM_RUNTIME_DLL)
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${STEAM_DLL_PATH}"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-    COMMENT "Copying Steam API library"
-)
+if(EXISTS "${STEAM_DLL_PATH}")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${STEAM_DLL_PATH}"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+        COMMENT "Copying Steam API library"
+    )
+else()
+    message(WARNING "STEAM_DLL_PATH failed to find: ${STEAM_DLL_PATH}")
+endif()
 
 if(EXISTS ${RESOURCE_DIR})
     install(DIRECTORY ${RESOURCE_DIR}/

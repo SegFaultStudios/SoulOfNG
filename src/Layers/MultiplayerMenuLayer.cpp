@@ -11,16 +11,16 @@
 
 #include <iostream>
 
-MultiplayerMenuLayer::MultiplayerMenuLayer(sf::RenderWindow& window, Client::UniquePtr client) : m_window(window)
+MultiplayerMenuLayer::MultiplayerMenuLayer(sf::RenderWindow& window, std::unique_ptr<SteamClientNetwork> client) : m_window(window)
 {
     if(client)
-        m_client = std::move(client);
+        m_steamClientNetwork = std::move(client);
 }
 
 void MultiplayerMenuLayer::update(float deltaTime)
 {
     m_scene.update(deltaTime);
-    m_client->update();
+    m_steamClientNetwork->update();
 }
 
 void MultiplayerMenuLayer::draw(sf::RenderWindow& window)
@@ -51,10 +51,11 @@ void MultiplayerMenuLayer::onStart()
     m_authorizationWidget = m_scene.getUiWidget<AuthorizationDialogWidget>(authorizationWidgetId);
     m_authorizationWidget->setPosition({sf::Vector2f(m_window.getSize().x / 2.0f, m_window.getSize().y / 2.0f)});
     m_authorizationWidget->setSize({m_window.getSize().x / 2.0f - 100.0f, 500});
+    m_authorizationWidget->hide();
 
     m_centerizedText = m_scene.getUiWidget<UIText>(centerizedTextId);
 
-    m_centerizedText->setPosition(sf::Vector2f(m_window.getSize().x / 2.0f - 50.0f, m_window.getSize().y / 2.0f + 50.0f));
+    m_centerizedText->setPosition(sf::Vector2f(m_window.getSize().x / 2.0f - 60.0f, m_window.getSize().y / 2.0f + 50.0f));
     m_centerizedText->setText("Trying to connect");
     m_centerizedText->setCharacterSize(15);
 
@@ -66,30 +67,11 @@ void MultiplayerMenuLayer::onStart()
     m_createLobbyWidget->setSize({m_window.getSize().x / 2.0f - 100.0f, 500});
     m_createLobbyWidget->setPosition({200, 150});
 
-    HANDLE_EVENT(m_authorizationWidget, UIDialogWidget::accepted, this, [this]
+    if(SteamBackend::isInitialized())
     {
-        m_client->authorization(m_authorizationWidget->getText());
-    });
-
-    HANDLE_EVENT(m_createLobbyWidget, UIDialogWidget::accepted, this, [this]
-    {
-        const std::string lobbyName = m_createLobbyWidget->getLobbyName();
-
-        LobbyData lobbyData;
-        lobbyData.name = lobbyName;
-        lobbyData.maxNumberOfPlayers = 4;
-        
-        m_client->askToCreateLobby(lobbyData);
-
-        m_createLobbyWidget->close();
-
-        m_table->hide();
-
-        m_connectionRotatingImage->show();
-
-        m_centerizedText->show();
-        m_centerizedText->setText("Creating lobby...");
-    });
+        m_connectionRotatingImage->hide();
+        m_centerizedText->hide();
+    }
 
     auto popupMessageId = m_scene.addUI<UIMessage>("PopUpMessage");
 
@@ -132,13 +114,9 @@ void MultiplayerMenuLayer::onStart()
     createLobbyButton->setPosition({m_window.getSize().x - 225.0f, m_window.getSize().y - 110.0f});
     createLobbyButton->setTexturedColor(sf::Color(50, 50, 50));
 
-    HANDLE_EVENT(createLobbyButton, clicked, this, [this]
+    HANDLE_EVENT(createLobbyButton, UIButton::clicked, this, [this]
     {
-        if(!m_client->isConnected())
-            return;
-        
-        if(m_createLobbyWidget)
-            m_createLobbyWidget->open();
+        m_steamClientNetwork->createLobby();
     });
 
     auto joinLobbyButton = m_scene.getUiWidget<UIButton>(joinLobbyButtonId);
@@ -160,8 +138,9 @@ void MultiplayerMenuLayer::onStart()
         //Kinda bad...
         const std::string stringId = selectedRow->cells.at(0).text.getText();
         unsigned long ulValue = std::stoul(stringId);
-        uint32_t lobbyId = static_cast<uint32_t>(ulValue);
-        m_client->joinLobby(lobbyId);
+        uint64 lobbyId = static_cast<uint64>(ulValue);
+
+        m_steamClientNetwork->joinLobby(CSteamID(lobbyId));
     });
 
     auto findPrivateLobbyButton = m_scene.getUiWidget<UIButton>(findPrivateLobbyButtonId);
@@ -174,106 +153,39 @@ void MultiplayerMenuLayer::onStart()
     m_popupMessage->setPosition({m_window.getSize().x - 400.0f, m_window.getSize().y - 200.0f});
     m_popupMessage->getRawText().setCharacterSize(15);
 
-    if(!m_client)
-        m_client = std::make_unique<Client>();
+    if(!m_steamClientNetwork)
+        m_steamClientNetwork = std::make_unique<SteamClientNetwork>();
 
-    if(!m_client->isAuthorized())
+    if(!SteamBackend::isInitialized())
+        m_centerizedText->setText("Steam is not reachable");
+
+    if(SteamBackend::isInitialized() && m_steamClientNetwork->isConnectedToSteamServers())
+        m_steamClientNetwork->requestLobbies();
+
+    HANDLE_SIGNAL(m_steamClientNetwork, lobbyCreated, this, [this](bool isCreated)
     {
-        m_authorizationWidget->open();
-    }
-
-    HANDLE_EVENT(m_client, Client::connected, this, [this]
-    {
-        m_connectionRotatingImage->hide();
-        m_centerizedText->hide();
-
-        m_table->show();
-
-        m_client->startPing();
-
-        m_client->askForLobbies();
-    });
-
-    HANDLE_EVENT(m_client, Client::failedToConnect, this, [this]
-    {
-        m_popupMessage->setText("Failed to connect to server");
-        m_popupMessage->showFor(3);
-        m_client->connect();
-    });
-
-    HANDLE_EVENT(m_client, Client::receivedLobbies, this, [this](const std::vector<LobbyData>& lobbyData)
-    {        
-        m_table->clearRows();
-        for(const auto& lobby : lobbyData)
-            m_table->addRow({std::to_string(lobby.lobbyId), lobby.name, std::to_string(lobby.numberOfPlayers) + "/" + std::to_string(lobby.maxNumberOfPlayers), "EU"});
-    });
-
-    HANDLE_EVENT(m_client, Client::lobbyCreated, this, [this](bool result)
-    {
-        if(result)
+        if(isCreated)
         {
             m_nextLayer = NextMultiplayerMenuLayer::LOBBY;
-            std::cout << "Joined to lobby\n";
             this->over();
-            // m_connectionRotatingImage->hide();
-            // m_centerizedText->hide();
-            // m_table->show();
-
-            // m_client->askForLobbies();
         }
     });
 
-    HANDLE_EVENT(m_client, Client::lobbyUpdate, this, [this](const LobbyData& lobbyData)
+    HANDLE_SIGNAL(m_steamClientNetwork, foundLobbies, this, [this](const std::vector<SteamClientNetwork::SteamLobbyData>& lobbyData)
     {
-        //Fucked up...
-        for(int rowIndex = 0; rowIndex < m_table->getRows().size(); ++rowIndex)
+        m_table->clearRows();
+        m_table->show();
+
+        for(const auto& data : lobbyData)
         {
-            const auto& row = m_table->getRows().at(rowIndex);
-            const std::string stringId = row.cells.at(0).text.getText();
-            unsigned long ulValue = std::stoul(stringId);
-            uint32_t lobbyId = static_cast<uint32_t>(ulValue);
-
-            if(lobbyData.lobbyId == lobbyId)
-            {
-                std::vector<std::string> newRowData;
-                // {
-                //     std::to_string(lobbyData.lobbyId),
-                //     lobbyData.name, 
-                //     std::to_string(lobbyData.numberOfPlayers) + "/" + std::to_string(lobbyData.maxNumberOfPlayers), 
-                //     "EU"
-                // };
-                newRowData.push_back(std::to_string(lobbyData.lobbyId));
-                newRowData.push_back(lobbyData.name);
-                newRowData.push_back(std::to_string(lobbyData.numberOfPlayers) + "/" + std::to_string(lobbyData.maxNumberOfPlayers));
-                newRowData.push_back("EU");
-                
-                m_table->updateRow(rowIndex, newRowData);
-
-                break;
-            }
+            std::vector<std::string> tableData;
+            tableData.push_back(std::to_string(data.id));
+            tableData.push_back(data.name);
+            tableData.push_back(std::to_string(data.players) + '/' + std::to_string(data.maxPlayers));
+            tableData.push_back("UE");
+            m_table->addRow(tableData);
         }
     });
-
-    HANDLE_EVENT(m_client, Client::joinLobbyAnswer, this, [this](uint8_t result)
-    {
-        if(result != JoinLobbyResponsePacket::JoinLobbyResponseType::SUCCESS)
-        {
-            std::cerr << "failed to join to lobby\n";
-            return;
-        }
-
-        std::cout << "Joined to lobby\n";
-
-        m_nextLayer = NextMultiplayerMenuLayer::LOBBY;
-
-        this->over();
-    });
-
-
-    if(!m_client->isConnected())
-        m_client->connect();
-    else
-        m_client->connected.emit(); //Kinda like a hack
 }
 
 void MultiplayerMenuLayer::onEnd()
@@ -288,8 +200,8 @@ std::unique_ptr<Layer> MultiplayerMenuLayer::getNextLayer() const
             return std::make_unique<MainMenuLayer>(m_window);
         case NextMultiplayerMenuLayer::LOBBY:
         {
-            m_client->clearAllSignals();
-            return std::make_unique<LobbyLayer>(m_window, std::move(m_client));
+            m_steamClientNetwork->clearSlots();
+            return std::make_unique<LobbyLayer>(m_window, std::move(m_steamClientNetwork));
         }
         default:
             return nullptr;

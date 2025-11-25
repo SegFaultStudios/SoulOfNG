@@ -5,12 +5,14 @@
 #include "Scene.hpp"
 #include "Network/Client.hpp"
 #include "Widgets/LobbyWidget.hpp"
+#include "Widgets/SteamFriendsDialogWidget.hpp"
 #include "Network/Lobby.hpp"
+#include "Network/SteamClientNetwork.hpp"
 
 class LobbyLayer : public Layer
 {
 public:
-    LobbyLayer(sf::RenderWindow& window, Client::UniquePtr client);
+    LobbyLayer(sf::RenderWindow& window, std::unique_ptr<SteamClientNetwork> client);
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     void handleEvent(sf::Event& event) override;
@@ -28,7 +30,8 @@ private:
     LobbyData m_currentLobby;
 
     LobbyWidget* m_lobbyWidget{nullptr};
-    mutable Client::UniquePtr m_client{nullptr};
+    SteamFriendsDialogWidget* m_friendsWidget{nullptr};
+    mutable std::unique_ptr<SteamClientNetwork> m_steamClientNetwork{nullptr};
     Scene m_scene;
     sf::RenderWindow& m_window;
 };

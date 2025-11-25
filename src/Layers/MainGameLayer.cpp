@@ -7,6 +7,10 @@
 
 #include "Layers/MainMenuLayer.hpp"
 
+#include "Animations/FrameAnimation.hpp"
+
+// static FrameAnimation s_frameAnimation("./resources/animations/Sprite-0003.png");
+
 MainGameLayer::MainGameLayer(sf::RenderWindow& window) : m_window(window)
 {
 }
@@ -23,6 +27,8 @@ void MainGameLayer::update(float deltaTime)
 
     if(auto target = m_camera->getTarget())
         m_rayLine[1].position = target->getPosition();
+
+    // s_frameAnimation.update(deltaTime);
 }
 
 void MainGameLayer::draw(sf::RenderWindow& window)
@@ -34,6 +40,8 @@ void MainGameLayer::draw(sf::RenderWindow& window)
 #endif
 
     window.draw(m_rayLine);
+
+    // s_frameAnimation.draw(window);
 
     // window.setTitle(std::to_string(1.0f / deltaTime));
 
@@ -121,6 +129,19 @@ void MainGameLayer::onStart()
             m_scene.addEntity(std::move(wall));
         }
     }
+
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0003.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0004.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0005.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0006.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0007.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0008.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0009.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0010.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0011.png");
+    // s_frameAnimation.addFrame("./resources/animations/Sprite-0012.png");
+
+    // s_frameAnimation.pause();
 }
 
 void MainGameLayer::onEnd()

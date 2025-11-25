@@ -13,11 +13,12 @@
 #include "Widgets/CreateLobbyDialogWidget.hpp"
 
 #include "Network/Client.hpp"
+#include "Network/SteamClientNetwork.hpp"
 
 class MultiplayerMenuLayer : public Layer
 {
 public:
-    explicit MultiplayerMenuLayer(sf::RenderWindow& window, Client::UniquePtr client = nullptr);
+    explicit MultiplayerMenuLayer(sf::RenderWindow& window, std::unique_ptr<SteamClientNetwork> client = nullptr);
     void update(float deltaTime) override;
     void draw(sf::RenderWindow& window) override;
     void handleEvent(sf::Event& event) override;
@@ -25,7 +26,7 @@ public:
     void onEnd() override;
     std::unique_ptr<Layer> getNextLayer() const override;
 private:
-    mutable Client::UniquePtr m_client{nullptr};
+    mutable std::unique_ptr<SteamClientNetwork> m_steamClientNetwork{nullptr};
 
     enum class NextMultiplayerMenuLayer
     {

@@ -3,6 +3,7 @@
 #include "Layers/SettingsGameLayer.hpp"
 #include "Layers/MultiplayerMenuLayer.hpp"
 #include "UI/UIButton.hpp"
+#include "AssetsManager.hpp"
 
 MainMenuLayer::MainMenuLayer(sf::RenderWindow& window) : m_window(window)
 {
@@ -45,11 +46,12 @@ void MainMenuLayer::onStart()
     const float startX = static_cast<float>(m_window.getSize().x / 2.0f);
 
     startButton->setText("Start");
-    startButton->setSize(buttonSize);
     startButton->setPosition({startX, startY});
     startButton->setTextColor(sf::Color::White);
     startButton->setBorderColor(sf::Color::White);
     startButton->setTexturedColor(sf::Color{50, 50, 50});
+    startButton->setSize(buttonSize);
+
     HANDLE_EVENT(startButton, UIButton::clicked, this, [this]
     {
         m_nextLayerId = MainMenuNextLayer::SINGLEPLAYER;
