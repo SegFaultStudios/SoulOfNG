@@ -43,7 +43,7 @@ void Logger::info(const std::string& message)
 
 void Logger::error(const std::string& message)
 {
-    log(LogLevel::ERROR, message);
+    log(LogLevel::LOG_LEVEL_ERROR, message);
 }
 
 void Logger::warning(const std::string& message)
@@ -93,7 +93,7 @@ terminalColors::TerminalColorType Logger::logLevelToColor(LogLevel level)
         case LogLevel::DEBUG: return terminalColors::BLUE;
         case LogLevel::INFO: return terminalColors::GREEN;
         case LogLevel::WARNING: return terminalColors::YELLOW;
-        case LogLevel::ERROR: return terminalColors::RED;
+        case LogLevel::LOG_LEVEL_ERROR: return terminalColors::RED;
         default: return terminalColors::WHITE;
     }
 }
@@ -105,7 +105,7 @@ std::string Logger::logLevelToString(LogLevel level)
         case LogLevel::DEBUG: return "DEBUG";
         case LogLevel::INFO: return "INFO";
         case LogLevel::WARNING: return "WARNING";
-        case LogLevel::ERROR: return "ERROR";
+        case LogLevel::LOG_LEVEL_ERROR: return "ERROR";
         default: return "UNKNOWN";
     }
 }

@@ -11,8 +11,8 @@
 Game::Game(const std::string& gameName)
 {
 #ifdef _WIN32
-    //SetEnvironmentVariableA("SteamAppId", "480"); //dont commit suka
-    //SetEnvironmentVariableA("SteamGameId", "480"); //dont commit suka
+    SetEnvironmentVariableA("SteamAppId", "480"); //dont commit suka
+    SetEnvironmentVariableA("SteamGameId", "480"); //dont commit suka
 #endif
 
     auto start = std::chrono::high_resolution_clock::now();

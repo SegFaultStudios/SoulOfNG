@@ -56,7 +56,7 @@ public:
         DEBUG = 0,
         INFO = 1,
         WARNING = 2,
-        ERROR = 3,
+        LOG_LEVEL_ERROR = 3,
     };
 
     Logger();
