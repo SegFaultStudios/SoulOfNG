@@ -126,6 +126,13 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE SFML_STATIC)
 
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Dbghelp)
+elseif(UNIX)
+    target_compile_options(${PROJECT_NAME} PRIVATE -g)
+    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-rdynamic")
+endif()
+
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION .
     BUNDLE DESTINATION .

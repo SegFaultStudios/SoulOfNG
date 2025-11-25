@@ -3,6 +3,7 @@
 #include "Network/SteamBackend.hpp"
 #include <filesystem>
 #include "Logger.hpp"
+#include "CrashHandler.hpp"
 
 #ifdef _WIN32
     #include <windows.h>
@@ -16,6 +17,8 @@ Game::Game(const std::string& gameName)
 #endif
 
     auto start = std::chrono::high_resolution_clock::now();
+
+    CrashHandler::setupCrashHandler();
 
     Logger::createDefaultLogger();
 

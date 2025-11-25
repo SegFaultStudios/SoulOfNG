@@ -6,6 +6,7 @@
 
 #include "Layers/MainMenuLayer.hpp"
 #include "Layers/LobbyLayer.hpp"
+#include "Logger.hpp"
 
 #include "Widgets/RotatingImage.hpp"
 
@@ -137,9 +138,20 @@ void MultiplayerMenuLayer::onStart()
 
         //Kinda bad...
         const std::string stringId = selectedRow->cells.at(0).text.getText();
-        unsigned long ulValue = std::stoul(stringId);
-        uint64 lobbyId = static_cast<uint64>(ulValue);
 
+        uint64 lobbyId;
+
+        try
+        {
+            auto ulValue = std::stoull(stringId);
+            lobbyId = static_cast<uint64>(ulValue);
+        }
+        catch(...)
+        {
+            LOG_ERROR("Failed to convert string to CSteamID");
+            return;
+        }
+        
         m_steamClientNetwork->joinLobby(CSteamID(lobbyId));
     });
 
