@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 project(SoulOfNG LANGUAGES CXX)
 
 if(MSVC)
-    
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     
     add_compile_options(
@@ -138,4 +137,4 @@ install(TARGETS ${PROJECT_NAME}
     BUNDLE DESTINATION .
     LIBRARY DESTINATION lib
     COMPONENT Runtime
-)   
+)
