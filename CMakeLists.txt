@@ -16,6 +16,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH "$ORIGIN")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_BUILD_RPATH "$ORIGIN")
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message("Building in DEBUG mode")
     add_compile_definitions(DEBUG_MODE=1)
@@ -101,6 +106,12 @@ if(EXISTS "${STEAM_DLL_PATH}")
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
         COMMENT "Copying Steam API library"
     )
+
+    install(FILES "${STEAM_DLL_PATH}"
+        DESTINATION .
+        COMPONENT Runtime
+    )
+
 else()
     message(WARNING "STEAM_DLL_PATH failed to find: ${STEAM_DLL_PATH}")
 endif()
@@ -119,4 +130,5 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION .
     BUNDLE DESTINATION .
     LIBRARY DESTINATION lib
-)
+    COMPONENT Runtime
+)   
