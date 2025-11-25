@@ -3,9 +3,12 @@
 
 #include <filesystem>
 #include "steam/steam_api.h"
+//#include "windows.h"
 
 Game::Game(const std::string& gameName)
 {
+    //SetEnvironmentVariableA("SteamAppId", "480"); //dont commit suka
+    //SetEnvironmentVariableA("SteamGameId", "480"); //dont commit suka
     if (!SteamAPI_Init())
         throw std::runtime_error("SteamAPI_Init failed. Make sure Steam is running and your appID is valid");
 

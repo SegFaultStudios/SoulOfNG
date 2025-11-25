@@ -212,6 +212,10 @@ public:
 
     void setCurrentRoom(std::unique_ptr<Room> room);
 
+    QuadTree* getQuadTree() {
+        return m_quadTree.get();
+    }
+
 
 private:
     //*Id = entity

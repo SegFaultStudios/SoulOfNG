@@ -1,5 +1,5 @@
 #include "Scene.hpp"
-
+#include "CollisionHandler.hpp"
 #include "nlohmann/json.hpp"
 
 #include <fstream>
@@ -246,8 +246,8 @@ sf::FloatRect Scene::getTwoEntitiesBounds(sf::FloatRect area1, sf::FloatRect are
 
 void Scene::update(float deltaTime)
 {
-    Player* player = nullptr;
-    sf::FloatRect playerBounds;
+   // Player* player = nullptr;
+    /*sf::FloatRect playerBounds;
 
     for (auto& [id, entity] : m_entities) {
         if (Player* p = dynamic_cast<Player*>(entity.get())) {
@@ -255,7 +255,7 @@ void Scene::update(float deltaTime)
             playerBounds = player->getGlobalBounds();
             break;
         }
-    }
+    }*/
 
     for (const auto& [id, entity] : m_entities)
         entity->update(deltaTime);
@@ -266,34 +266,42 @@ void Scene::update(float deltaTime)
 
 
 
-    if (player) {
+    //if (player) {
 
-        /*auto playerBounds = player->getPotentialBounds();
-        if (player->getPotentialBounds().position != oldPlayerBounds.position) {
-            float searchRadius = 80.0f;
+        //auto potentialPlayerPosition = player->getPotentialPosition();
+        //
+        //    float searchRadius = 80.0f;
 
-            sf::FloatRect area(
-                { playerBounds.position.x - searchRadius,
-                playerBounds.position.y - searchRadius },
-                { searchRadius * 2, searchRadius * 2 });
+        //    sf::FloatRect area(
+        //        { playerBounds.position.x - searchRadius,
+        //        playerBounds.position.y - searchRadius },
+        //        { searchRadius * 2, searchRadius * 2 });
 
-            auto entitiesAround = m_quadTree->findEntitiesAround(area);
-            std::cout << "Entities around: " << entitiesAround.size() << std::endl;
+        //    auto entitiesAround = m_quadTree->findEntitiesAround(area);
+        //    //std::cout << "Entities around: " << entitiesAround.size() << std::endl;
+        //    bool pidoras = false;
+        //    for (auto& entity : entitiesAround) {
+        //        auto entityBounds = entity->getGlobalBounds();
 
-            for (auto& entity : entitiesAround) {
-                auto entityBounds = entity->getGlobalBounds();
+        //        float epsilon = 0.01f;
 
-                float epsilon = 0.01f;
+        //        if (playerBounds.findIntersection(entityBounds)) {
+        //            pidoras = true;
+        //            //std::cout << "gay found" << std::endl;
+        //            auto pos = CollisionHandler::resolveNoRotationWallMovement(player->getGlobalBounds(), potentialPlayerPosition, entityBounds);
+        //            std::cout << "pos x: " << pos.x << " y: " << pos.y << std::endl;
+        //            player->setPosition(pos);
 
-                if (playerBounds.findIntersection(entityBounds)) {
+        //        }
 
+        //    }
+        //    if (!pidoras) {
+        //        player->setPosition(player->getPosition() + potentialPlayerPosition);
+        //    }
+        
 
-                }
-            }
-        }*/
-
+        //}
     }
-}
 
 
 

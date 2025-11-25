@@ -9,6 +9,7 @@
 #include "QuadTree.hpp"
 #include "AssetsManager.hpp"
 #include "Widgets/EscapeUI.hpp"
+#include "Entities/Player.hpp"
 
 #if USE_EDITOR
     #include "Editor.hpp"
@@ -34,7 +35,7 @@ private:
             sf::Vector2f(500, 500))};
 
 
-
+    Player* m_player{nullptr};
 
     std::unique_ptr<Camera> m_camera{nullptr};
 #if USE_EDITOR
